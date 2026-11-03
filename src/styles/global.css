@@ -1,0 +1,21 @@
+/*
+  Tokens and resets shared by every page. Each page sets its colours on a
+  class on its <html> (see pages/Home/HomePage.css). The type is the system
+  face until the site has a design.
+*/
+:root {
+  /* the page's side margin: anything sized to the column uses it, so left edges line up */
+  --page-gutter: max(16px, 4.2vw);
+
+  --font-ui: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --type-h1-size: clamp(44px, 7.2vw, 128px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}

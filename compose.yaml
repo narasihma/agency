@@ -1,0 +1,23 @@
+services:
+  # Development server with hot reload: docker compose up dev
+  dev:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "${PORT:-8443}:8443"
+    volumes:
+      - .:/app
+      # Keep the container's Linux node_modules separate from the host's
+      - /app/node_modules
+
+  # Production build served by nginx: docker compose up web
+  web:
+    build:
+      context: .
+      target: prod
+      args:
+        SITE_ORIGIN: ${SITE_ORIGIN:-http://localhost:8080}
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    restart: unless-stopped

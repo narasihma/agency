@@ -1,0 +1,83 @@
+/* Colours come from the page: --accent, --white */
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 32px 4px 4px;
+  color: var(--white, #fff);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.action-button__handle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  background: var(--white, #fff);
+  transition: transform 160ms ease;
+}
+
+.action-button__handle img {
+  display: block;
+}
+
+.action-button__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.action-button__label {
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.action-button__caption {
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.action-button--primary {
+  border-radius: 4px;
+  background: var(--accent, #224506);
+}
+
+.action-button--primary .action-button__handle {
+  border-radius: 2px;
+}
+
+/* the primary label is the display face */
+.action-button--primary .action-button__label {
+  font-family: "Knewave", var(--font-ui);
+  font-size: 24px;
+}
+
+.action-button--ghost {
+  border-radius: 999px;
+}
+
+.action-button--ghost .action-button__handle {
+  border-radius: 50%;
+}
+
+.action-button--outline {
+  border: 1px solid var(--line-on-dark, rgb(255 255 255 / 0.12));
+  border-radius: 4px;
+}
+
+.action-button--outline .action-button__handle {
+  border-radius: 4px;
+}
+
+.action-button:hover .action-button__handle {
+  transform: translateX(2px);
+}
+
+.action-button:focus-visible {
+  outline: 2px solid var(--accent-ink, #afc336);
+  outline-offset: 3px;
+}

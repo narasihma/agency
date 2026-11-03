@@ -1,0 +1,24 @@
+/* Page variables live under html.home (index.html sets the class) */
+html.home {
+  --home-bg: #f6f6f4;
+  --home-text: #1b1b1a;
+}
+html.home body {
+  background: var(--home-bg);
+  color: var(--home-text);
+}
+
+.home-page {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  min-height: 100svh;
+  padding: 0 var(--page-gutter);
+}
+.home-page h1 {
+  margin: 0;
+  font-size: var(--type-h1-size);
+  font-weight: 500;
+  line-height: 1;
+}
+.home-page p { margin: 0; }
