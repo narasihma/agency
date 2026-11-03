@@ -43,17 +43,23 @@
 
 .action-button--primary {
   border-radius: 4px;
-  background: var(--accent, #224506);
+  background: var(--accent, #252525);
 }
 
 .action-button--primary .action-button__handle {
   border-radius: 2px;
 }
 
-/* the primary label is the display face */
+/*
+  The primary label is the display face: Bricolage Grotesque ExtraBold, in its display cut (optical
+  size 96, the only one the page loads). At 24px the text cut would smooth away the ink traps and
+  squeezed curves that give it its hand-made edge. The display cut is already tightly spaced.
+*/
 .action-button--primary .action-button__label {
-  font-family: "Knewave", var(--font-ui);
+  font-family: "Bricolage Grotesque", var(--font-ui);
   font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .action-button--ghost {

@@ -6,6 +6,12 @@ Items from the site owner, in the order given. When one is finished, tick it, ad
 
 ## Done
 
+- [x] **16. Book a call font: option 2 (Recursive was too soft and comic)** (added 2026-11-03, done 2026-11-03). Bricolage Grotesque ExtraBold, display cut. See `version-history.md`.
+
+- [x] **15. Book a call font: organic but still digital, not a script** (added 2026-11-03, done 2026-11-03). Recursive Bold, half casual at rest, fully casual on hover. See `version-history.md`.
+
+- [x] **14. Change the accent (the deep green) to `#252525`** (added 2026-11-03, done 2026-11-03). Buttons, the chat button, the footer bar and the accent details in the icons are now charcoal. See `version-history.md`.
+
 - [x] **13. Redraft logo: use the new state 4 for the wink, and a path transition from state 2's turned 1 to state 3's turned P** (added 2026-11-03, done 2026-11-03). The bar and the P are traced into matching outlines and morph point by point while the mouth opens. The left eye winks into state 4's closed eye. A new `pnpm logo:build` rebuilds the parts from the Figma images. See `version-history.md`.
 
 - [x] **12. Redraft logo: 90° turn between states 1 and 2, a longer beat on state 2, and a wink on state 3 before going back** (added 2026-11-03, done 2026-11-03). The 1B turns a quarter counter-clockwise as it melts, holds a third of a second, and the face winks its right eye before the wind-up. See `version-history.md`.

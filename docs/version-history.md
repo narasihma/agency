@@ -2,6 +2,21 @@
 
 Repository changes, newest first.
 
+## 2026-11-03: Redraft "Book a call" in Bricolage Grotesque
+
+- **Why:** Recursive felt too soft and comic, so the owner picked option 2.
+- **What changed:** the primary `ActionButton` label is Bricolage Grotesque ExtraBold (800) in its display cut (optical size 96), which keeps the ink traps and squeezed curves that read hand-made at 24px. `redraft/index.html` loads only that instance (`Bricolage+Grotesque:opsz,wght@96,800`) in place of Recursive. Letter spacing is 0, since the display cut is already tight. The casual-on-hover effect went with Recursive; the handle's nudge on hover stays.
+
+## 2026-11-03: Redraft "Book a call" in Recursive
+
+- **Why:** the owner wanted the Book a call label to feel organic but still read digital, without a script face (off-brand). They picked Recursive from the options given (Recursive, Bricolage Grotesque, Chillax/Pally, Funnel Display).
+- **What changed:** the primary `ActionButton` label is Recursive Bold (was Knewave), loaded from Google Fonts with only its weight 700 and the Casual axis (`CASL` 0–1) in `redraft/index.html`. It rests at Casual 0.5, and hovering or keyboard focus eases it to 1 over 600ms (expo ease-out), a small echo of the logo melting. Casual doesn't change the letter widths, so the button doesn't shift. With reduced motion it switches without the transition. Letter spacing is −0.01em, size unchanged (24px).
+
+## 2026-11-03: Redraft accent: deep green to charcoal
+
+- **Why:** the owner wanted the accent (the deep green, `color/accent` in Figma) to be `#252525`.
+- **What changed:** `--accent` in `RedraftPage.css` is `#252525` (was `#224506`), so the Book a call buttons, the chat button and the footer bar are charcoal. So is `ActionButton`'s fallback, and the accent baked into three SVGs from Figma: the arrow on the primary buttons' white handle (`arrow-on-accent.svg`), the chat icon's dots (`icon-chat.svg`) and the dot in the "Your website" slot (`empty-slot.svg`). White on `#252525` is about 15:1. Only the site changed: the Figma variable is still the green.
+
 ## 2026-11-03: Redraft logo: bar → P path morph, wink from state 4
 
 - **Why:** the owner added state 4 (state 3 with the left eye closed) to the Figma "Animation" group for the wink, and asked for a path transition between state 2's turned 1 and state 3's turned P.
