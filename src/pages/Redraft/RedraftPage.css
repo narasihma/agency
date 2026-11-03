@@ -176,9 +176,8 @@ html.redraft body {
   justify-content: space-between;
 }
 
-.rd-hero__logo img {
+.rd-hero__logo {
   width: calc(60.6 * var(--u));
-  height: auto;
 }
 
 .rd-hero__actions {
@@ -692,7 +691,7 @@ html.redraft body {
     width: auto;
   }
 
-  .rd-hero__logo img {
+  .rd-hero__logo {
     width: 48px;
   }
 

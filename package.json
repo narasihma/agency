@@ -10,6 +10,7 @@
     "build:prod": "vite build --mode production",
     "preview": "vite preview",
     "typecheck": "tsc",
+    "logo:build": "node scripts/redraft-logo.ts",
     "format": "oxfmt"
   },
   "dependencies": {

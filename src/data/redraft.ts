@@ -1,5 +1,7 @@
 /** Redraft preview (/redraft/): copy and assets from the "Redraft" group in the Figma file */
 
+import { REDRAFT_LOGO_EYE, REDRAFT_LOGO_PATHS as P } from "@/data/redraft-logo.ts";
+
 const asset = (name: string) => `${import.meta.env.BASE_URL}assets/redraft/${name}`;
 
 export interface RedraftLink {
@@ -37,7 +39,21 @@ export interface RedraftPerson {
 }
 
 export const REDRAFT_ASSETS = {
-  logo: asset("logo.svg"),
+  /**
+   * The "Animation" group in Figma, split into parts by `pnpm logo:build`: the resting logo
+   * (state 1), the melted logo (2), the character (3) and its wink (4)
+   */
+  logoAnimation: {
+    logo: { src: asset("logo-state-1.png"), width: P.width, height: P.logoHeight },
+    melted: { top: { src: asset("logo-state-2-top.png"), width: P.width, height: P.bar.height }, bar: P.bar.outline },
+    face: {
+      top: { src: asset("logo-state-3-top.png"), width: P.width, height: P.p.height },
+      p: P.p.outline,
+      mouth: P.p.mouth,
+      pupil: { src: asset("logo-state-3-pupil.png"), ...REDRAFT_LOGO_EYE.pupil },
+      lid: { src: asset("logo-state-4-lid.png"), ...REDRAFT_LOGO_EYE.lid },
+    },
+  },
   wordmark: asset("wordmark.svg"),
   texture: asset("texture.jpg"),
   grain: asset("grain.png"),

@@ -1,0 +1,58 @@
+/*
+  Size the logo with width on .morph-logo. Its box keeps state 1's proportions (--morph-ratio),
+  so the layout never moves; taller states hang below it.
+*/
+.morph-logo {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / var(--morph-ratio);
+}
+
+/* as tall as the tallest state: the goo filter only paints inside this box */
+.morph-logo__stage {
+  position: absolute;
+  inset: 0 0 auto;
+  aspect-ratio: 1 / var(--morph-max-ratio);
+  /* tilt and scale around the middle of the resting logo, which sits in the top part */
+  transform-origin: 50% 40%;
+}
+
+/* each state is as tall as its image and turns and stretches around its own middle */
+.morph-logo__state {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.morph-logo__state img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* the traced outlines (bar, P) fill their state's box, drawn in its pixels */
+.morph-logo__outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* cut-out parts (the winking pupil, the closed eye), placed in their state's pixels */
+.morph-logo__state .morph-logo__part {
+  position: absolute;
+}
+
+.morph-logo__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.morph-logo:focus-visible {
+  outline: 2px solid var(--accent-ink, #afc336);
+  outline-offset: 4px;
+}

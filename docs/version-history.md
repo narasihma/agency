@@ -2,6 +2,41 @@
 
 Repository changes, newest first.
 
+## 2026-11-03: Redraft logo: bar → P path morph, wink from state 4
+
+- **Why:** the owner added state 4 (state 3 with the left eye closed) to the Figma "Animation" group for the wink, and asked for a path transition between state 2's turned 1 and state 3's turned P.
+- **Parts build (`pnpm logo:build`, `scripts/redraft-logo.ts`):** reads the four states from `assets-src/redraft-logo/` (kept outside `public/`) and writes the parts to `public/assets/redraft/`: `logo-state-1.png`, `logo-state-2-top.png` (state 2 without its bar), `logo-state-3-top.png` (state 3 without its P or left pupil), `logo-state-3-pupil.png` and `logo-state-4-lid.png` (state 4's closed eye). It also writes `src/data/redraft-logo.ts`: the bar's and the P's outlines (traced from the images' alpha with marching squares, resampled to 160 points each and lined up point for point), the mouth (the P's loop), and where the eye parts sit. No dependencies: it decodes and encodes the PNGs with `node:zlib`. The whole-state images `logo-state-2.png` and `logo-state-3.png` are gone.
+- **Path morph:** states 2 and 3 now draw their bottoms as SVG paths. From 0.7 to 0.92s both paths move point by point from the bar to the P (eased like the cross-fade), and the mouth opens from a slit in its middle. The two states carry the same outline, so state 2 stays solid under state 3 fading in, to avoid a washed-out middle. The goo filter no longer runs on this change; it still melts 1 → 2 and 3 → 1.
+- **Wink:** now on the left eye, using state 4. The pupil squeezes into the closed eye's box from 1.5s, hands over to state 4's closed eye for about 40ms, and opens by 1.72s. The cut-out right pupil from the last change is gone.
+- **`MorphLogo` props** are now `logo`, `melted` (top image + bar outline) and `face` (top image, P, mouth, pupil, lid), assembled in `src/data/redraft.ts` as `logoAnimation`.
+
+## 2026-11-03: Redraft logo: quarter turn, longer state 2, wink
+
+- **Why:** the owner asked for a 90° turn between states 1 and 2, a little more time on state 2 before state 3, and one of state 3's dots to wink before going back to 1.
+- **Quarter turn:** state 2 is the 1B turned a quarter counter-clockwise (the B's bowls point up and the 1 lies along the bottom), so from 1 to 2 both states now turn −90° together while one melts into the other. Each is resized so that, turned, it fills the other's box, so the silhouettes line up throughout. 0–380ms, quick to start and long to land.
+- **State 2 holds** from 380 to 700ms, then the eyes pop (700–920ms), with the whole logo dipping slightly just before.
+- **Wink:** state 3's right pupil is cut out of `logo-state-3.png` into `logo-state-3-pupil.png` (61×61, placed at 320, 174 in state 3's pixels, `logoWink` in `src/data/redraft.ts`). At 1.5s it squeezes almost flat, holds for 40ms and opens by 1.72s, while the face is still idling, before the wind-up.
+- **Timing:** the cycle is now 3.3s: wind-up 1.9–2.25s, snap back 2.25–2.65s, settle to 3.3s. The states are now wrappers (`.morph-logo__state`) that turn and stretch around their own middles, and every keyframe uses one transform shape (translate, rotate, scale) so the parts interpolate cleanly.
+
+## 2026-11-03: Redraft logo animation retimed after a reference
+
+- **Why:** 150ms per state was too quick. The owner pointed to a reference for timing and feel (dribbble upload 35813511, a mascot face morphing into a wordmark) and asked to replicate it with our three states.
+- **Reference, measured frame by frame:** the face pops in (~0.35s, ease-out), lives with a slow tilt (~0.65s), leans further as a wind-up (~0.35s, accelerating), snaps into the wordmark (~0.4s, fast ease-out), then grows slightly into place and settles (~0.75s).
+- **Our cycle on hover (2.9s, in `morph.ts`):** 0–0.28s 1B melts into state 2; 0.28–0.52s the eyes pop open into state 3, while the whole logo pops to 106% with a back-out ease; 0.52–1.5s the face lives, tilting from −5° to 6°; 1.5–1.85s the wind-up to 12° and 94%; 1.85–2.25s it snaps back into the 1B (fast expo ease-out), arriving at 90%; 2.25–2.9s it grows back to 100% and settles. The goo filter melts the silhouettes during the two morphs only and is off the rest of the time (left on while rotated, it showed a faint seam). The `morphMs`/`lingerMs` props are gone: the timeline is one set of keyframes per image plus one for the whole logo, played with the Web Animations API.
+- **Reduced motion:** the same timeline as plain cross-fades, with no tilt, scale or goo.
+
+## 2026-11-03: Redraft logo animation timing
+
+- **Why:** the owner wanted 150ms between states and a 3-second linger on the last state before going back to the original.
+- **What changed:** each morph now takes 150ms (`morphMs`, was 0.9s), and the states run 1 → 2 → 3 back to back (0.3s in all). The logo stays on state 3 for 3s (`lingerMs`, replacing the 5s `holdMs` on every state), then morphs back to state 1 in 150ms. A full cycle is about 3.45s. The spring easing and goo filter are unchanged, now compressed into the shorter morphs.
+
+## 2026-11-03: Redraft logo animation
+
+- **Why:** the owner wanted the hero logo to animate through the three states in the Figma "Animation" group (`32:612`), Smart Animate–style with smooth easing, 5 seconds apart, started by hovering.
+- **States:** `public/assets/redraft/logo-state-1.png` (the plain 1B, now the resting logo in place of `logo.svg`, which is deleted), `-2.png` (melted) and `-3.png` (melted, with eyes), the 512px images from the Figma group.
+- **`MorphLogo` component:** hovering or focusing the logo plays one cycle, 1 → 2 → 3 → 1, holding each state 5s (`holdMs`). A cycle plays to the end even if the pointer leaves, and hovering again mid-cycle doesn't restart it. Each change takes 0.9s (`morphMs`): the two images cross-fade while one stretches to the other's height on a spring easing (CSS `linear()` sampled from a damped spring, 8% overshoot; older browsers get a back-out cubic-bezier). An SVG blur + alpha-threshold ("goo") filter, strongest mid-change and off at rest, melts the two silhouettes together, so the logo reads as one shape morphing. The images are bitmaps, so there are no matching vector layers to interpolate as Figma's Smart Animate would. Visitors who ask for reduced motion get a plain cross-fade.
+- **Layout:** the logo's box keeps state 1's proportions, so the taller states hang below it without moving the top bar.
+
 ## 2026-11-03: Redraft footer clock removed
 
 - **Why:** the owner asked to remove the clock.

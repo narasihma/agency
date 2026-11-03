@@ -1,4 +1,5 @@
 import ActionButton from "@/components/ActionButton";
+import MorphLogo from "@/components/MorphLogo";
 import { REDRAFT, REDRAFT_ASSETS as A } from "@/data/redraft.ts";
 import "./RedraftPage.css";
 
@@ -24,9 +25,7 @@ export default function RedraftPage() {
       <div id="top" className="redraft-page">
         <header className="rd-hero">
           <div className="rd-hero__bar">
-            <a className="rd-hero__logo" href="#top" aria-label={REDRAFT.brand}>
-              <img src={A.logo} alt="" width={61} height={45} />
-            </a>
+            <MorphLogo className="rd-hero__logo" href="#top" label={REDRAFT.brand} {...A.logoAnimation} />
             <nav className="rd-hero__actions" aria-label="Quick actions">
               {ICON_BUTTONS.map((b) => (
                 <button
