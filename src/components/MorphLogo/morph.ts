@@ -195,6 +195,20 @@ export const STAGE_KEYFRAMES: Keyframe[] = [
 ];
 
 /**
+ * The line boil on states 2–4: like a drawing traced again for every frame of a paper animation,
+ * their edges wobble through a few redrawn takes, held on threes (8 a second). State 1, the logo
+ * itself, stays crisp.
+ */
+export const BOIL = {
+  fps: 8,
+  /** noise seeds, one per take */
+  takes: [3, 11, 23, 37],
+};
+
+/** the seed of the take showing at `ms` into the cycle */
+export const boilTake = (ms: number) => BOIL.takes[Math.floor((ms * BOIL.fps) / 1000) % BOIL.takes.length];
+
+/**
  * the stretches where two states overlap, when the goo filter melts them together. Not 2 → 3:
  * there the bar's path turns into the P's, and the rest of the two states is nearly the same.
  */

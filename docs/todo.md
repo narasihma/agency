@@ -6,6 +6,10 @@ Items from the site owner, in the order given. When one is finished, tick it, ad
 
 ## Done
 
+- [x] **18. Redraft logo boil: finer (1.5px) and slower (8 fps)** (added 2026-11-03, done 2026-11-03). See `version-history.md`.
+
+- [x] **17. Redraft logo: livelier, jittery edges on states 2, 3 and 4, like a paper-traced animation** (added 2026-11-03, done 2026-11-03). The character's edges now boil: noise redraws them 12 times a second through four takes, while the resting logo stays crisp. See `version-history.md`.
+
 - [x] **16. Book a call font: option 2 (Recursive was too soft and comic)** (added 2026-11-03, done 2026-11-03). Bricolage Grotesque ExtraBold, display cut. See `version-history.md`.
 
 - [x] **15. Book a call font: organic but still digital, not a script** (added 2026-11-03, done 2026-11-03). Recursive Bold, half casual at rest, fully casual on hover. See `version-history.md`.

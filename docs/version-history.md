@@ -2,6 +2,16 @@
 
 Repository changes, newest first.
 
+## 2026-11-03: Redraft logo: finer, slower line boil
+
+- **Why:** the owner wanted the boil a bit finer and slower.
+- **What changed:** the edges now move up to 1.5px (`BOIL_PX`, was 3px), and a new take comes every 1/8s, held on threes (`BOIL.fps` 8, was 12).
+
+## 2026-11-03: Redraft logo: line boil on states 2–4
+
+- **Why:** the owner wanted states 2, 3 and 4 to have livelier, jittery edges, like a paper-traced animation.
+- **What changed:** `MorphLogo` has a second SVG filter, the line boil: fractal noise (`feTurbulence`, base frequency 0.07, 3 octaves) displaces the edges by up to 3px (`feDisplacementMap`). During the hover cycle it sits on the state 2 and state 3 layers, and the wink and state 4's closed eye are inside state 3. Every 1/12s the noise gets a new seed, cycling through four takes (`BOIL` and `boilTake` in `morph.ts`), so the edges hold still between frames and jump like drawings redrawn on twos. State 1, the resting logo, stays crisp, and the filter is removed when the cycle ends. Reduced motion skips it, as it skips the other movement.
+
 ## 2026-11-03: Redraft "Book a call" in Bricolage Grotesque
 
 - **Why:** Recursive felt too soft and comic, so the owner picked option 2.

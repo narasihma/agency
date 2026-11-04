@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef } from "react";
-import { CYCLE, gooAt, pathMorph, pathProgress, STAGE_KEYFRAMES, stateKeyframes, winkKeyframes } from "./morph.ts";
+import { boilTake, CYCLE, gooAt, pathMorph, pathProgress, STAGE_KEYFRAMES, stateKeyframes, winkKeyframes } from "./morph.ts";
 import "./MorphLogo.css";
 
 export interface MorphLogoImage {
@@ -36,6 +36,10 @@ export interface MorphLogoProps {
 
 /** peak blur of the gooey morph, in CSS pixels */
 const GOO_BLUR = 3;
+/** how far the line boil pushes the edges of states 2–4, in CSS pixels (half each way) */
+const BOIL_PX = 1.5;
+/** the boil's wobble: about one bump every 14px of edge, with finer roughness on top */
+const BOIL_FREQUENCY = 0.07;
 
 const place = (part: MorphLogoPart, frame: MorphLogoImage) => ({
   left: `${(part.x / frame.width) * 100}%`,
@@ -47,10 +51,13 @@ const place = (part: MorphLogoPart, frame: MorphLogoImage) => ({
  * Logo link that, when hovered or focused, turns into its character and back (timeline in
  * morph.ts). The states cross-fade and take each other's shape while a blur + alpha-threshold
  * filter melts their silhouettes together; from 2 to 3 the bar's outline morphs into the P's
- * instead. Around that the whole logo dips, pops, tilts, winks, winds up and settles.
+ * instead. Around that the whole logo dips, pops, tilts, winks, winds up and settles, and the
+ * character's edges boil like a hand-traced drawing.
  */
 export default function MorphLogo({ href, label, logo, melted, face, className = "" }: MorphLogoProps) {
-  const filterId = `morph-goo-${useId().replace(/[^\w-]/g, "")}`;
+  const uid = useId().replace(/[^\w-]/g, "");
+  const filterId = `morph-goo-${uid}`;
+  const boilId = `morph-boil-${uid}`;
   const stage = useRef<HTMLSpanElement>(null);
   const layers = useRef<(HTMLSpanElement | null)[]>([]);
   const barPath = useRef<SVGPathElement>(null);
@@ -59,6 +66,7 @@ export default function MorphLogo({ href, label, logo, melted, face, className =
   const lid = useRef<HTMLImageElement>(null);
   const blur = useRef<SVGFEGaussianBlurElement>(null);
   const threshold = useRef<SVGFEColorMatrixElement>(null);
+  const boilNoise = useRef<SVGFETurbulenceElement>(null);
   const running = useRef(false);
   const frame = useRef(0);
 
@@ -92,9 +100,20 @@ export default function MorphLogo({ href, label, logo, melted, face, className =
     pupil.current?.animate(wink.pupil, timing);
     lid.current?.animate(wink.lid, timing);
 
+    // states 2 and 3 (with the wink) boil for the whole cycle; they're hidden when not in play
+    const boiling = layers.current.slice(1);
+    boiling.forEach((layer) => layer && (layer.style.filter = `url(#${boilId})`));
+    let take = -1;
+
     const start = performance.now();
     const step = (now: number) => {
       const ms = now - start;
+      // a new take only on its frame, so the edges hold still in between like drawn frames
+      const seed = boilTake(ms);
+      if (seed !== take) {
+        take = seed;
+        boilNoise.current?.setAttribute("seed", String(seed));
+      }
       const { blurPx, slope, offset } = gooAt(ms, GOO_BLUR);
       blur.current?.setAttribute("stdDeviation", String(blurPx));
       threshold.current?.setAttribute("values", `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${slope} ${offset}`);
@@ -111,6 +130,7 @@ export default function MorphLogo({ href, label, logo, melted, face, className =
         frame.current = requestAnimationFrame(step);
       } else {
         el.style.filter = "";
+        boiling.forEach((layer) => layer && (layer.style.filter = ""));
         running.current = false;
       }
     };
@@ -166,6 +186,11 @@ export default function MorphLogo({ href, label, logo, melted, face, className =
         <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
           <feGaussianBlur ref={blur} in="SourceGraphic" stdDeviation="0" />
           <feColorMatrix ref={threshold} type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+        </filter>
+        {/* the line boil: noise pushes the edges about; a new seed is a new take */}
+        <filter id={boilId} x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
+          <feTurbulence ref={boilNoise} type="fractalNoise" baseFrequency={BOIL_FREQUENCY} numOctaves="3" seed="3" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale={BOIL_PX} xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </svg>
     </a>
