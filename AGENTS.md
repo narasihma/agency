@@ -24,7 +24,7 @@ src/
     main.tsx                  entrypoint: imports @/styles/global.css, mounts the page into #root
     <Name>Page.tsx            page component (HomePage)
     <Name>Page.css            page-level styles
-  components/<Name>/          one folder per component, named after it, usable from any page (ActionButton, MorphLogo)
+  components/<Name>/          one folder per component, named after it, usable from any page (ActionButton, CrumplePaper, MorphLogo)
     index.ts                  re-exports the component (and any public types)
     <Name>.tsx                the component
     <Name>.css                its styles
@@ -45,6 +45,7 @@ Key files:
 - `src/pages/Home/HomePage.tsx` - Home page (`/`): a placeholder title and line from `src/data/home.ts` until the site has a design
 - `src/pages/Redraft/RedraftPage.tsx` - Redraft preview (`/redraft/`, `noindex`): the Figma file's "Redraft" group built as a page; copy and asset paths in `src/data/redraft.ts`, assets in `public/assets/redraft/`. The hero scales as one 1440 × 900 composition in `--u`; the other sections reflow
 - `src/components/ActionButton/ActionButton.tsx` - the white handle + arrow + label link, in `primary`, `ghost` and `outline` variants
+- `src/components/CrumplePaper/CrumplePaper.tsx` - a photo of crumpled paper multiplied over its parent, fading in as the page scrolls (none at the top, full near the end) and nudged like stop motion at 8 fps. On the Redraft page it sits inside `.rd-paper`, so it drifts with the paper. The page then ends on a desk (`.rd-desk`): the torn edge of the sheet, the footer and a pile of paper balls (`PAPER_PILE` in `src/data/redraft.ts`). The photos' sources are in `assets-src/redraft-paper/`
 - `src/components/MorphLogo/MorphLogo.tsx` - logo link that, on hover or focus, turns the logo into its character and back: a gooey SVG morph with a quarter turn from 1 to 2, a path morph from state 2's bar to state 3's P, and a wink into state 4's closed eye. The 3.3s timeline (`CYCLE`), keyframes, easings and the path interpolation are in `morph.ts`
 - `scripts/redraft-logo.ts` (`pnpm logo:build`) - splits the Figma logo states in `assets-src/redraft-logo/` into the parts in `public/assets/redraft/logo-*.png` and traces the bar and P outlines into `src/data/redraft-logo.ts` (generated: don't edit by hand). Run it after changing those images
 ### Structure rules

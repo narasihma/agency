@@ -26,7 +26,7 @@ src/
       HomePage.tsx/.css placeholder home page
     Redraft/            the Figma "Redraft" group built as a page
   data/                 page copy: home.ts, redraft.ts
-  components/           one folder per component (ActionButton, MorphLogo);
+  components/           one folder per component (ActionButton, CrumplePaper, MorphLogo);
                         each has an index.ts, so import as @/components/<Name>
   styles/global.css     tokens and resets shared by every page
 public/                 static files served as-is

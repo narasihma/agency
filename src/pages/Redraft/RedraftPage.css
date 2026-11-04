@@ -95,25 +95,42 @@ html.redraft body {
 .rd-paper {
   --drift: 320px;
   position: fixed;
-  inset: 0 0 auto;
+  /* 4px spare on every side for the stop-motion takes */
+  inset: -4px -4px auto;
   z-index: -1;
-  height: calc(100vh + var(--drift));
-  height: calc(100lvh + var(--drift));
+  height: calc(100vh + var(--drift) + 8px);
+  height: calc(100lvh + var(--drift) + 8px);
   background: var(--texture) center / cover, var(--canvas);
 }
 
-/* browsers without scroll-linked animations (Firefox for now) keep the paper still */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
+/*
+  the paper lives like stop motion: three takes, 4 a second, each nudged a pixel (translate, so it
+  adds to the drift's transform). Browsers without scroll-linked animations (Firefox for now) keep
+  the takes but not the drift.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .rd-paper {
+    animation: rd-paper-take 750ms steps(1) infinite;
+  }
+
+  @supports (animation-timeline: scroll()) {
     .rd-paper {
-      animation: rd-paper-drift linear both;
-      animation-timeline: scroll(root block);
+      animation:
+        rd-paper-drift linear both,
+        rd-paper-take 750ms steps(1) infinite;
+      animation-timeline: scroll(root block), auto;
     }
   }
 }
 
 @keyframes rd-paper-drift {
   to { transform: translate3d(0, calc(-1 * var(--drift)), 0); }
+}
+
+@keyframes rd-paper-take {
+  0% { translate: 0 0; }
+  33.333% { translate: 1px -0.5px; }
+  66.667% { translate: -0.5px 1px; }
 }
 
 /*
@@ -153,6 +170,131 @@ html.redraft body {
 
 @media (prefers-reduced-motion: reduce) {
   .rd-grain__layer {
+    animation: none;
+  }
+}
+
+/* ---------- The end of the sheet: torn edge, desk, pile ---------- */
+
+/*
+  the page's paper runs into one wide photo of crumpled paper (4939 × 4090 source, fine folds) that
+  tears off onto a desk just above the footer. The photo is as wide as the page and hangs up behind
+  the end of the work section, fading in over its top 40% so the paper above blends into it. Its margins are in %
+  of the page's width, so they follow the photo's proportions. The desk makes no stacking
+  context: the desk colour, the photo and its grain sit at z-index -1, above the fixed paper and
+  behind everything on the page.
+*/
+.rd-desk {
+  --desk: #f3f3f3;
+  position: relative;
+  /* so the photo's negative margin doesn't pull the desk up with it */
+  display: flow-root;
+}
+
+/* the desk colour, under the footer; the photo covers its top */
+.rd-desk::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--desk);
+}
+
+.rd-desk__sheet {
+  position: relative;
+  z-index: -1;
+  aspect-ratio: 4939 / 4090;
+  /* the photo is 82.8% of the width tall: 45.4% hangs above the desk, 37.4% stays in the flow */
+  margin-top: -45.4%;
+  mask-image: linear-gradient(transparent, #000 40%);
+}
+
+.rd-desk__sheet img {
+  display: block;
+  /* 2px spare on each side for the paper's stop-motion takes */
+  width: calc(100% + 4px);
+  height: 100%;
+  margin-left: -2px;
+  /* never distorted, whatever image ends up in the box */
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rd-desk__sheet img {
+    animation: rd-paper-take 750ms steps(1) infinite;
+  }
+}
+
+/* the photo's desk (its bottom 4%) runs exactly into the desk colour */
+.rd-desk__sheet::after {
+  content: "";
+  position: absolute;
+  inset: 96% 0 0;
+  background: linear-gradient(transparent, var(--desk));
+}
+
+/* the footer starts on the photo's desk, just under the tear and its shadow (96% down the photo) */
+.rd-desk__footer {
+  margin-top: -3.3%;
+}
+
+/*
+  the same film grain as the paper's, over the photo too (it covers the fixed grain), fading in
+  with it. 100vw stands in for the page's width here, near enough for grain.
+*/
+.rd-desk__grain {
+  position: absolute;
+  inset: -45.4vw 0 0;
+  z-index: -1;
+  overflow: hidden;
+  opacity: 0.07;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent, #000 33vw);
+}
+
+/*
+  the pile at the foot of the page: a 1440-wide frame in design pixels (--u), centred and cut to
+  the page, so on phones it shows the middle of the pile at a readable size. The band is lower than
+  the tallest pieces, which rise behind the footer's content; the bar in front cuts the pile off at
+  the bottom. Each piece twitches through three takes at 4 frames a second, like stop motion.
+*/
+.rd-pile {
+  --u: max(calc(100cqw / 1440), 0.55px);
+  position: relative;
+  z-index: -1;
+  height: calc(290 * var(--u));
+}
+
+.rd-pile__frame {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(1440 * var(--u));
+  height: 100%;
+  translate: -50% 0;
+}
+
+.rd-pile__piece {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  bottom: calc(var(--bottom) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: auto;
+  rotate: var(--r);
+  /* the cut-outs are a little greyer than the desk's white paper; lift them to match */
+  filter: brightness(1.08) drop-shadow(0 calc(8 * var(--u)) calc(10 * var(--u)) rgb(0 0 0 / 0.22));
+  animation: rd-pile-take 750ms steps(1) infinite;
+  animation-delay: var(--delay);
+}
+
+@keyframes rd-pile-take {
+  0% { translate: 0 0; rotate: var(--r); }
+  33.333% { translate: 0.5px -0.5px; rotate: calc(var(--r) + 0.3deg); }
+  66.667% { translate: -0.5px 0.5px; rotate: calc(var(--r) - 0.2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rd-pile__piece {
     animation: none;
   }
 }
@@ -262,7 +404,8 @@ html.redraft body {
 .rd-approach {
   display: grid;
   grid-template-columns: minmax(0, 443fr) minmax(0, 900fr);
-  align-items: start;
+  /* the intro and the benefits share one height, so their tops and bottoms line up */
+  align-items: stretch;
   gap: 17px;
   padding: 64px var(--side);
 }
@@ -310,6 +453,8 @@ html.redraft body {
 .rd-approach__benefits {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* equal rows that fill the column, as tall as the intro beside them */
+  grid-auto-rows: 1fr;
   gap: 17px;
 }
 
@@ -528,7 +673,8 @@ html.redraft body {
   display: flex;
   justify-content: space-between;
   gap: 64px;
-  padding: 200px var(--side) 96px;
+  /* the torn sheet above already sets the footer apart */
+  padding: 40px var(--side) 48px;
 }
 
 .rd-footer__pitch {
@@ -750,8 +896,8 @@ html.redraft body {
   }
 
   .rd-footer__main {
-    padding-top: 96px;
-    padding-bottom: 64px;
+    padding-top: 24px;
+    padding-bottom: 40px;
   }
 }
 

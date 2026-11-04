@@ -2,6 +2,54 @@
 
 Repository changes, newest first.
 
+## 2026-11-04: Redraft: the torn sheet at half the scale
+
+- **Why:** the folds in the torn sheet were too big. The owner supplied a version twice as wide, so at the same page width its folds are about half the size.
+- **Asset:** `assets-src/redraft-paper/crumpled-paper.png` is now the owner's wide version (4939 × 4090, replacing the 2560 × 4456 one). It becomes `paper-crumpled-sheet-wide.jpg` (grayscale, 2880 × 2385 so it stays sharp at 2× on a 1440 page, 430KB), replacing `paper-crumpled-sheet.jpg`. The new name keeps a cached copy of the tall photo out of the new box. Its tear and shadow sit at 90–96% of its height, and its desk is the same `#f3f3f3`.
+- **Layout:** the photo is now 82.8% as tall as it is wide. The tear stays where it was, 34% of the page width below the work section: the photo hangs 45.4% of the width up behind the work section (was 133%) and fades in over its top 40% (was 25%; the fade now runs over 33% of the width, was 43.5%). The footer starts 3.3% of the width up into the photo's desk (was 7%). The desk's grain follows (`inset: -45.4vw`, fading in over 33vw).
+
+## 2026-11-04: Redraft paper: stop-motion jitter on the whole sheet
+
+- **Why:** the 4-a-second takes only moved the crumple overlay, which is invisible near the top of the page and now hidden under the crumpled-sheet photo lower down, so the jitter had effectively gone. The owner asked for it back on the paper background.
+- **What changed:** a CSS animation, `rd-paper-take` (750ms, `steps(1)`: three takes, 4 a second, nudging by up to 1px), now runs on `.rd-paper` (the texture and the crumple inside it) and on the crumpled-sheet photo, in sync. It uses `translate`, so on `.rd-paper` it adds to the scroll drift's `transform` (the two run as a pair of animations, the drift on the scroll timeline). `.rd-paper` is 4px larger on every side, and the sheet photo 2px wider each side, so the nudges never show an edge. `CrumplePaper` no longer nudges its photo itself (its `TAKES`/`TAKE_FPS` are gone); it only follows the scroll. Reduced motion turns the takes off.
+
+## 2026-11-04: Redraft approach section: cards aligned
+
+- **Why:** the intro card ended lower than the benefit cards beside it.
+- **What changed:** `.rd-approach` now stretches its two columns to one height (was `align-items: start`), and `.rd-approach__benefits` has equal rows that fill it (`grid-auto-rows: 1fr`). At 1440 and 1920 the intro and the benefits now both run from 964 to 1365px, with the two rows of benefits meeting at the 17px gap. The cards grew by about 9px each. Stacked layouts (below 1180px) are unchanged.
+
+## 2026-11-04: Redraft: the owner's crumpled, torn sheet replaces the torn-sheet photo
+
+- **Why:** the paper above and the torn piece still didn't match, in scale or where one faded into the other. Two attempts to bridge them (a finer in-between texture, then a torn strip across the join) were reverted before being committed. The owner then supplied one photo of crumpled paper torn off onto a desk at its foot, to blend with the page's background.
+- **Asset:** `assets-src/redraft-paper/crumpled-paper.png` (the owner's, 2560 × 4456) becomes `paper-crumpled-sheet.jpg` (grayscale, full size, 710KB), replacing the old torn-sheet crop `paper-sheet.jpg`. It has a new name so a cached copy of the old, much wider photo can't turn up stretched in its box. It is full size, not downscaled, so it isn't blown up on wide or high-density screens. As a guard, the image is also `object-fit: cover`. Its tear and shadow sit at 89–96% of its height, and its desk (the bottom 4%) is `#f3f3f3`, now the desk colour.
+- **Layout:** the photo is as wide as the page and 174% as tall as it is wide. It hangs 133% of the width up behind the work section and fades in over its top quarter, so the background blends into it. The footer starts 7% of the width up into the photo's desk, just under the tear (`.rd-desk__footer`). The margins are in % of the page's width, so they follow the photo's proportions at every size.
+- **Stacking:** `.rd-desk` no longer isolates; it is a block formatting context instead, so the photo's negative margin doesn't pull it up. The desk colour (`::before`), the photo and the desk's grain sit at z-index −1, above the fixed paper and behind everything on the page, including the work cards the photo hangs behind. The grain now also covers the photo, fading in with it.
+- **Unchanged:** the big-fold crumple still fades into the fixed paper as the page scrolls (`CrumplePaper`, one photo, as before). The pile and footer are as before.
+
+## 2026-11-04: Redraft ending cropped up, slower jitter
+
+- **Why:** the owner mocked up a tighter ending, cutting the empty desk between the torn edge and the footer and the space above the pile. They also found the jitter too intense.
+- **Footer:** it now overlaps the bottom 22% of the torn-sheet photo (`.rd-desk__footer`, a negative top margin), so it starts on the photo's desk just under the torn edge and its shadow.
+- **Pile:** the band is 290 design pixels tall (was 400), so it starts right under the footer's content. The tallest balls rise above it instead of being cut flat as in the mock-up, and they sit behind the footer content (the pile is at `z-index: -1` in the desk). The copyright bar now covers the pile's bottom.
+- **Jitter:** the pile's pieces take 750ms per cycle of three takes (4 a second, was 8), moving half a pixel and up to 0.3° (was 1px and 0.6°). The crumpled paper still follows the scroll 8 times a second, but changes take only 4 times a second (`TAKE_FPS`), nudging by up to 1px (was 1.5px).
+
+## 2026-11-04: Redraft background: photographic crumpling, torn sheet, paper pile
+
+- **Why:** the shaded crumpling read as vector, not photographic. The owner supplied two reference photos (a torn, crumpled sheet on a white desk, and crumpled paper balls) and asked for the page to end on a pile of crumpled paper, with the torn half sheet somewhere along the end. A first pass for the owner to react to.
+- **Sources** (`assets-src/redraft-paper/`): `torn-sheet.jpg` (the owner's photo at half size, 4032 × 2688; the 8064px original was 10MB) and `paper-balls.png`. They were turned into the served images in headless Chrome, in a one-off script that isn't in the repo yet. All the outputs are grayscale, to match the neutral paper. `paper-crumple.jpg` (3000 × 951) is the crumpled band above the torn edge. `paper-sheet.jpg` (2400 × 1042) is the torn edge with the desk under it; the desk's colour, sampled from its bottom rows, is `#f0f0f0`. `paper-ball-1…21.png` are cut out of the balls photo by colour: the paper is cream, while the background and its shadows are neutral, so pixels with chroma of 13 or more are paper. Low-chroma highlights enclosed by paper are filled back in, and the edges are softened by a pixel. Pieces 2, 5, 17 and 20 are the flat sheets.
+- **Crumpling:** `CrumplePaper` no longer uses WebGL. It multiplies `paper-crumple.jpg` over the paper and fades it in with the scroll, in 24 steps, eased (power 1.5): none at the top, 80% by 85% of the way down. It updates at 8 fps and nudges the photo through three takes (up to 1.5px), like a stop-motion camera. The shader (`crumple.ts`) is gone.
+- **Torn sheet:** after the work section, the page moves onto a full-width desk (`.rd-desk`). It starts with the torn-edge photo, `clamp(320px, 43.4vw, 900px)` tall, fading in over its top 30% so the crumpled paper above runs into it. Its bottom blends into the desk colour, which carries on under the footer. The desk has the same film grain, fading in with the photo. The footer's top padding dropped from 200px to 40px (24px on phones), since the sheet now sets it apart.
+- **Pile:** 21 cut-outs at the foot of the page, between the footer's content and the copyright bar: flat sheets at the back, then a row of balls and a lower row in front. They're laid out on a 1440-wide frame in design pixels (`PAPER_PILE` in `src/data/redraft.ts`), drawn at 1.2× their photo size with a soft shadow and lifted 8% in brightness to match the desk. On phones the frame stays at least 55% of its desktop size, centred and cut to the screen. Each piece twitches through three takes at 8 fps (a pixel and under a degree), each starting at a different moment. Reduced motion stops them.
+- **Rights:** the reference photos look like stock or AI images. Their licence needs checking before the site goes public, or they need replacing with our own shots.
+
+## 2026-11-04: Redraft background: stop-motion crumpled paper
+
+- **Why:** the background looked stale despite the grain. The owner pointed to a stock clip of crumpled paper in stop motion and asked for the paper to start smooth and get more crumpled towards the end of the site. The effect is drawn in code; nothing from the clip is used.
+- **What changed:** new `CrumplePaper` component (`src/components/CrumplePaper/`), a WebGL canvas with no library. The shader (`crumple.ts`) shades the sheet as a crumpled height field from four layers of Voronoi cells, from 640px folds down to about 60px creases. Each cell rises from its edges (the creases) and is tilted its own way, with a thin dark line along each fold. It draws only light and shadow over the paper texture, capped at 16% shadow and 14% highlight so text on the paper stays readable.
+- **Scroll:** the crumpling follows the page's scroll in 30 steps, eased (power 1.4) so the upper sections show only the first big folds and the footer is fully crumpled. The top starts at 6%, close to the texture's own soft wrinkles. Folds made early stay put while finer ones come in.
+- **Stop motion:** it redraws 8 times a second, like the logo's boil, and cycles through three takes: each moves fold corners by up to 2px, re-tilts the facets slightly and flickers the light. So the sheet keeps living even when the page is still. Under reduced motion it follows the scroll without the takes. Without WebGL the paper stays flat, as before.
+- **Page:** the canvas sits inside `.rd-paper`, so it drifts with the paper's parallax. It is drawn at up to 1.5× pixel ratio.
+
 ## 2026-11-03: Redraft logo: finer, slower line boil
 
 - **Why:** the owner wanted the boil a bit finer and slower.

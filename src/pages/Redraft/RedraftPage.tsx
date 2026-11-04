@@ -1,4 +1,5 @@
 import ActionButton from "@/components/ActionButton";
+import CrumplePaper from "@/components/CrumplePaper";
 import MorphLogo from "@/components/MorphLogo";
 import { REDRAFT, REDRAFT_ASSETS as A } from "@/data/redraft.ts";
 import "./RedraftPage.css";
@@ -10,6 +11,9 @@ const ICON_BUTTONS = [
   { icon: A.iconMenu, label: "Menu" },
 ];
 
+/** the pile's pieces are drawn a little larger than in their photo */
+const PILE_SCALE = 1.2;
+
 /** Redraft preview (/redraft/): the "Redraft" group from the Figma file, built as a page */
 export default function RedraftPage() {
   const { hero, approach, process, work, footer } = REDRAFT;
@@ -17,7 +21,10 @@ export default function RedraftPage() {
   return (
     <>
       {/* outside .redraft-page: its container query would pin these fixed layers to it instead of the window */}
-      <div className="rd-paper" style={{ "--texture": `url(${A.texture})` }} aria-hidden="true" />
+      {/* the crumpling sits inside the paper, so it drifts with it */}
+      <div className="rd-paper" style={{ "--texture": `url(${A.texture})` }} aria-hidden="true">
+        <CrumplePaper src={A.paperCrumple} />
+      </div>
       <div className="rd-grain" aria-hidden="true">
         <div className="rd-grain__layer" style={{ "--grain": `url(${A.grain})` }} />
       </div>
@@ -25,7 +32,12 @@ export default function RedraftPage() {
       <div id="top" className="redraft-page">
         <header className="rd-hero">
           <div className="rd-hero__bar">
-            <MorphLogo className="rd-hero__logo" href="#top" label={REDRAFT.brand} {...A.logoAnimation} />
+            <MorphLogo
+              className="rd-hero__logo"
+              href="#top"
+              label={REDRAFT.brand}
+              {...A.logoAnimation}
+            />
             <nav className="rd-hero__actions" aria-label="Quick actions">
               {ICON_BUTTONS.map((b) => (
                 <button
@@ -161,63 +173,104 @@ export default function RedraftPage() {
             </ul>
           </section>
         </main>
+      </div>
 
-        <footer id="contact" className="rd-footer">
-          <div className="rd-footer__main">
-            <div className="rd-footer__pitch">
-              <p className="rd-footer__pitch-text">
-                <span className="rd-muted">{footer.pitchMuted}</span> {footer.pitch}
-              </p>
-              <div className="rd-ctas">
-                <ActionButton variant="primary" arrow={A.arrowOnAccent} {...REDRAFT.primaryCta} />
-                <ActionButton variant="ghost" arrow={A.arrow} {...REDRAFT.secondaryCta} />
+      {/* the sheet tears off and the desk shows under it: full width, so outside .redraft-page */}
+      <div className="rd-desk">
+        <div className="rd-desk__sheet" aria-hidden="true">
+          <img
+            src={A.paperSheet.src}
+            alt=""
+            width={A.paperSheet.width}
+            height={A.paperSheet.height}
+            loading="lazy"
+          />
+        </div>
+        <div className="rd-desk__grain" aria-hidden="true">
+          <div className="rd-grain__layer" style={{ "--grain": `url(${A.grain})` }} />
+        </div>
+
+        <div className="redraft-page rd-desk__footer">
+          <footer id="contact" className="rd-footer">
+            <div className="rd-footer__main">
+              <div className="rd-footer__pitch">
+                <p className="rd-footer__pitch-text">
+                  <span className="rd-muted">{footer.pitchMuted}</span> {footer.pitch}
+                </p>
+                <div className="rd-ctas">
+                  <ActionButton variant="primary" arrow={A.arrowOnAccent} {...REDRAFT.primaryCta} />
+                  <ActionButton variant="ghost" arrow={A.arrow} {...REDRAFT.secondaryCta} />
+                </div>
+              </div>
+
+              <div className="rd-footer__nav">
+                <div className="rd-footer__links">
+                  {[footer.explore, footer.legal].map((group) => (
+                    <nav key={group.title} className="rd-footer__group" aria-label={group.title}>
+                      <p className="rd-footer__group-title">{group.title}</p>
+                      <ul>
+                        {group.links.map((l) => (
+                          <li key={l.label}>
+                            <a href={l.href}>{l.label}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  ))}
+                </div>
+                <div className="rd-footer__meta">
+                  <button type="button" className="rd-footer__language">
+                    {footer.language}
+                    <img src={A.caret} alt="" width={16} height={16} />
+                  </button>
+                  <ul className="rd-footer__team">
+                    {REDRAFT.team.map((p) => (
+                      <li key={p.name}>
+                        <img src={p.footerAvatar} alt={p.name} width={48} height={48} />
+                        <img
+                          className="rd-footer__badge"
+                          src={A.linkedIn}
+                          alt=""
+                          width={16}
+                          height={16}
+                        />
+                      </li>
+                    ))}
+                    <li>
+                      <img src={A.teamMark} alt={REDRAFT.brand} width={48} height={48} />
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-
-            <div className="rd-footer__nav">
-              <div className="rd-footer__links">
-                {[footer.explore, footer.legal].map((group) => (
-                  <nav key={group.title} className="rd-footer__group" aria-label={group.title}>
-                    <p className="rd-footer__group-title">{group.title}</p>
-                    <ul>
-                      {group.links.map((l) => (
-                        <li key={l.label}>
-                          <a href={l.href}>{l.label}</a>
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
+            <div className="rd-pile" aria-hidden="true">
+              <div className="rd-pile__frame">
+                {A.paperPile.map((p, i) => (
+                  <img
+                    key={p.src}
+                    className="rd-pile__piece"
+                    src={p.src}
+                    alt=""
+                    width={p.width}
+                    height={p.height}
+                    loading="lazy"
+                    style={{
+                      "--x": p.x - (p.width * PILE_SCALE) / 2,
+                      "--bottom": p.bottom,
+                      "--w": p.width * PILE_SCALE,
+                      "--r": `${p.rotate}deg`,
+                      // takes start at different moments, so the pieces don't twitch in unison
+                      "--delay": `${-((i * 250) % 750)}ms`,
+                    }}
+                  />
                 ))}
               </div>
-              <div className="rd-footer__meta">
-                <button type="button" className="rd-footer__language">
-                  {footer.language}
-                  <img src={A.caret} alt="" width={16} height={16} />
-                </button>
-                <ul className="rd-footer__team">
-                  {REDRAFT.team.map((p) => (
-                    <li key={p.name}>
-                      <img src={p.footerAvatar} alt={p.name} width={48} height={48} />
-                      <img
-                        className="rd-footer__badge"
-                        src={A.linkedIn}
-                        alt=""
-                        width={16}
-                        height={16}
-                      />
-                    </li>
-                  ))}
-                  <li>
-                    <img src={A.teamMark} alt={REDRAFT.brand} width={48} height={48} />
-                  </li>
-                </ul>
-              </div>
             </div>
-          </div>
-          <div className="rd-footer__bar">
-            <span>{footer.copyright}</span>
-          </div>
-        </footer>
+            <div className="rd-footer__bar">
+              <span>{footer.copyright}</span>
+            </div>
+          </footer>
+        </div>
       </div>
     </>
   );

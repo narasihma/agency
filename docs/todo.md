@@ -6,6 +6,24 @@ Items from the site owner, in the order given. When one is finished, tick it, ad
 
 ## Done
 
+- [x] **27. Redraft: the torn page's scale is too big; use the owner's double-width image instead** (added 2026-11-04, done 2026-11-04). The new photo's folds are about half the size; the tear stays in the same place above the footer. See `version-history.md`.
+
+- [x] **26. Redraft: bring back the 4-a-second stop-motion jitter on the paper background** (added 2026-11-04, done 2026-11-04). The whole paper (texture and crumple) and the crumpled sheet now step through three takes 4 times a second, in sync. See `version-history.md`.
+
+- [x] **25. Redraft: align the boxes in the second section (approach)** (added 2026-11-04, done 2026-11-04). The intro card and the four benefit cards now share a top and a bottom edge on desktop. See `version-history.md`.
+
+- [x] **24. Redraft: revert 22 and 23, drop their images, and blend the owner's crumpled paper (torn off onto a desk) with the original background** (added 2026-11-04, done 2026-11-04). The owner's photo replaces the torn-sheet photo. It hangs up behind the work section, fading into the background, and tears off just above the footer. See `version-history.md`.
+
+- [x] **23. Redraft: collage one of the live edges from the owner's torn-edges image between the paper above and the torn sheet** (added 2026-11-04, done 2026-11-04, reverted in 24). A traced edge, then a whole strip across the join. Neither was it.
+
+- [x] **22. Redraft background: an in-between texture so the paper blends into the torn piece** (added 2026-11-04, done 2026-11-04, reverted in 24). The owner's finer crumple between the big folds and the torn sheet.
+
+- [x] **21. Redraft ending: crop it up after the owner's mock-up, and slow the stop-motion jitter** (added 2026-11-04, done 2026-11-04). The footer now starts just under the torn edge, the pile sits right under the footer's content, and the paper and the pile jitter half as often and half as far. See `version-history.md`.
+
+- [x] **20. Redraft background: photorealistic instead of vector, ending on the torn half sheet and a pile of crumpled paper (owner's reference photos)** (added 2026-11-04, done 2026-11-04). The crumpling is now a photo fading in down the page; the sheet tears off above the footer onto a white desk, and the page ends on a pile of paper balls cut out of the reference. A first pass to react to. See `version-history.md`.
+
+- [x] **19. Liven up the Redraft background: stop-motion crumpled paper, flat at the top and more crumpled towards the end of the page** (added 2026-11-04, done 2026-11-04). After a stock clip of crumpled paper in stop motion. New `CrumplePaper` component: the folds deepen and multiply as you scroll, and it redraws 8 times a second in slightly different takes. See `version-history.md`.
+
 - [x] **18. Redraft logo boil: finer (1.5px) and slower (8 fps)** (added 2026-11-03, done 2026-11-03). See `version-history.md`.
 
 - [x] **17. Redraft logo: livelier, jittery edges on states 2, 3 and 4, like a paper-traced animation** (added 2026-11-03, done 2026-11-03). The character's edges now boil: noise redraws them 12 times a second through four takes, while the resting logo stays crisp. See `version-history.md`.
