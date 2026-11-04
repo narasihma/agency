@@ -1,0 +1,923 @@
+/*
+  Home page (/): the Figma file's "Redraft" group. Colours are the Figma file's SYBIOSME variables.
+  The hero is a fixed 1440 × 900 composition, so it scales with the page in
+  --u (one design pixel); the sections below reflow instead.
+*/
+html.home {
+  --ink: #111111;
+  --muted: #686868;
+  --subtle: #aaaaaa;
+  --white: #ffffff;
+  --canvas: #e5e5e5;
+  --accent: #252525;
+  --accent-ink: #afc336;
+  --accent-warm: #ffd65a;
+  --line: rgb(0 0 0 / 0.2);
+  --line-on-dark: rgb(255 255 255 / 0.12);
+  --glass: rgb(0 0 0 / 0.45);
+  --icon-button: #666666;
+  --radius-inner: 38px;
+  --radius: 4px;
+  --side: 40px;
+
+  --font-ui: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+html.home body {
+  font-weight: 500;
+}
+
+.home-page {
+  container-type: inline-size;
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.home-page :where(h1, h2, h3, p, ol, ul) {
+  margin: 0;
+  font: inherit;
+}
+
+.home-page :where(ol, ul) {
+  padding: 0;
+  list-style: none;
+}
+
+.home-page img {
+  display: block;
+}
+
+.home-muted { color: var(--muted); }
+.home-warm { color: var(--accent-warm); }
+
+.home-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.home-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home-eyebrow {
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.home-h1 {
+  font-size: clamp(36px, 4.2cqw, 60px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-glass {
+  border: 1px solid var(--line-on-dark);
+  border-radius: var(--radius);
+  background: var(--glass);
+  color: var(--white);
+}
+
+/* ---------- Background: paper + analogue grain ---------- */
+
+/*
+  the hero's paper texture, fixed to the viewport so the page scrolls over one sheet. It is
+  --drift taller than the screen and slides up by --drift over the whole scroll: a slow parallax.
+*/
+.home-paper {
+  --drift: 320px;
+  position: fixed;
+  /* 4px spare on every side for the stop-motion takes */
+  inset: -4px -4px auto;
+  z-index: -1;
+  height: calc(100vh + var(--drift) + 8px);
+  height: calc(100lvh + var(--drift) + 8px);
+  background: var(--texture) center / cover, var(--canvas);
+}
+
+/*
+  the paper lives like stop motion: three takes, 4 a second, each nudged a pixel (translate, so it
+  adds to the drift's transform). Browsers without scroll-linked animations (Firefox for now) keep
+  the takes but not the drift.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .home-paper {
+    animation: home-paper-take 750ms steps(1) infinite;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .home-paper {
+      animation:
+        home-paper-drift linear both,
+        home-paper-take 750ms steps(1) infinite;
+      animation-timeline: scroll(root block), auto;
+    }
+  }
+}
+
+@keyframes home-paper-drift {
+  to { transform: translate3d(0, calc(-1 * var(--drift)), 0); }
+}
+
+@keyframes home-paper-take {
+  0% { translate: 0 0; }
+  33.333% { translate: 1px -0.5px; }
+  66.667% { translate: -0.5px 1px; }
+}
+
+/*
+  film grain on the paper, behind the content: a tiled noise image that jumps to a new
+  offset 24 times a second. Same z-index as the paper but later in the page, so it paints over it.
+*/
+.home-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+.home-grain__layer {
+  position: absolute;
+  inset: 0 -128px -128px 0;
+  background: var(--grain) 0 0 / 128px 128px repeat;
+  animation: home-grain 0.5s steps(1) infinite;
+}
+
+@keyframes home-grain {
+  0% { transform: translate3d(0, 0, 0); }
+  8.333% { transform: translate3d(-37px, -61px, 0); }
+  16.667% { transform: translate3d(-83px, -14px, 0); }
+  25% { transform: translate3d(-12px, -88px, 0); }
+  33.333% { transform: translate3d(-64px, -39px, 0); }
+  41.667% { transform: translate3d(-91px, -72px, 0); }
+  50% { transform: translate3d(-28px, -23px, 0); }
+  58.333% { transform: translate3d(-55px, -97px, 0); }
+  66.667% { transform: translate3d(-76px, -48px, 0); }
+  75% { transform: translate3d(-9px, -56px, 0); }
+  83.333% { transform: translate3d(-47px, -8px, 0); }
+  91.667% { transform: translate3d(-68px, -81px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-grain__layer {
+    animation: none;
+  }
+}
+
+/* ---------- The end of the sheet: torn edge, desk, pile ---------- */
+
+/*
+  the page's paper runs into one wide photo of crumpled paper (4939 × 4090 source, fine folds) that
+  tears off onto a desk just above the footer. The photo is as wide as the page and hangs up behind
+  the end of the work section, fading in over its top 40% so the paper above blends into it. Its margins are in %
+  of the page's width, so they follow the photo's proportions. The desk makes no stacking
+  context: the desk colour, the photo and its grain sit at z-index -1, above the fixed paper and
+  behind everything on the page.
+*/
+.home-desk {
+  --desk: #f3f3f3;
+  position: relative;
+  /* so the photo's negative margin doesn't pull the desk up with it */
+  display: flow-root;
+}
+
+/* the desk colour, under the footer; the photo covers its top */
+.home-desk::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--desk);
+}
+
+.home-desk__sheet {
+  position: relative;
+  z-index: -1;
+  aspect-ratio: 4939 / 4090;
+  /* the photo is 82.8% of the width tall: 45.4% hangs above the desk, 37.4% stays in the flow */
+  margin-top: -45.4%;
+  mask-image: linear-gradient(transparent, #000 40%);
+}
+
+.home-desk__sheet img {
+  display: block;
+  /* 2px spare on each side for the paper's stop-motion takes */
+  width: calc(100% + 4px);
+  height: 100%;
+  margin-left: -2px;
+  /* never distorted, whatever image ends up in the box */
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-desk__sheet img {
+    animation: home-paper-take 750ms steps(1) infinite;
+  }
+}
+
+/* the photo's desk (its bottom 4%) runs exactly into the desk colour */
+.home-desk__sheet::after {
+  content: "";
+  position: absolute;
+  inset: 96% 0 0;
+  background: linear-gradient(transparent, var(--desk));
+}
+
+/* the footer starts on the photo's desk, just under the tear and its shadow (96% down the photo) */
+.home-desk__footer {
+  margin-top: -3.3%;
+}
+
+/*
+  the same film grain as the paper's, over the photo too (it covers the fixed grain), fading in
+  with it. 100vw stands in for the page's width here, near enough for grain.
+*/
+.home-desk__grain {
+  position: absolute;
+  inset: -45.4vw 0 0;
+  z-index: -1;
+  overflow: hidden;
+  opacity: 0.07;
+  pointer-events: none;
+  mask-image: linear-gradient(transparent, #000 33vw);
+}
+
+/*
+  the pile at the foot of the page: a 1440-wide frame in design pixels (--u), centred and cut to
+  the page, so on phones it shows the middle of the pile at a readable size. The band is lower than
+  the tallest pieces, which rise behind the footer's content; the bar in front cuts the pile off at
+  the bottom. Each piece twitches through three takes at 4 frames a second, like stop motion.
+*/
+.home-pile {
+  --u: max(calc(100cqw / 1440), 0.55px);
+  position: relative;
+  z-index: -1;
+  height: calc(290 * var(--u));
+}
+
+.home-pile__frame {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(1440 * var(--u));
+  height: 100%;
+  translate: -50% 0;
+}
+
+.home-pile__piece {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  bottom: calc(var(--bottom) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: auto;
+  rotate: var(--r);
+  /* the cut-outs are a little greyer than the desk's white paper; lift them to match */
+  filter: brightness(1.08) drop-shadow(0 calc(8 * var(--u)) calc(10 * var(--u)) rgb(0 0 0 / 0.22));
+  animation: home-pile-take 750ms steps(1) infinite;
+  animation-delay: var(--delay);
+}
+
+@keyframes home-pile-take {
+  0% { translate: 0 0; rotate: var(--r); }
+  33.333% { translate: 0.5px -0.5px; rotate: calc(var(--r) + 0.3deg); }
+  66.667% { translate: -0.5px 0.5px; rotate: calc(var(--r) - 0.2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-pile__piece {
+    animation: none;
+  }
+}
+
+/* ---------- Hero ---------- */
+
+.home-hero {
+  --u: calc(100cqw / 1440);
+  position: relative;
+  height: calc(900 * var(--u));
+  color: var(--white);
+}
+
+.home-hero__bar {
+  position: absolute;
+  top: calc(43 * var(--u));
+  left: calc(52 * var(--u));
+  right: calc(43 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-hero__logo {
+  width: calc(60.6 * var(--u));
+}
+
+.home-hero__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.home-icon-button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--icon-button);
+  cursor: pointer;
+}
+
+.home-icon-button--accent {
+  background: var(--accent);
+}
+
+.home-icon-button:focus-visible,
+.home-footer__language:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 3px;
+}
+
+.home-hero__headline {
+  position: absolute;
+  top: calc(267 * var(--u));
+  right: calc(43 * var(--u));
+  width: calc(470 * var(--u));
+  font-size: calc(48 * var(--u));
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-hero__offer {
+  position: absolute;
+  top: calc(402 * var(--u));
+  left: calc(43 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(22 * var(--u));
+}
+
+.home-hero__price {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-hero__from {
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.home-hero__amount {
+  font-size: calc(72 * var(--u));
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-hero__period {
+  margin-left: 0.05em;
+  font-size: 0.5em;
+  opacity: 0.6;
+}
+
+.home-hero__wordmark {
+  position: absolute;
+  top: calc(628.5 * var(--u));
+  left: calc(44.6 * var(--u));
+  width: calc(1312 * var(--u));
+  height: auto;
+}
+
+/* ---------- Our approach ---------- */
+
+.home-approach {
+  display: grid;
+  grid-template-columns: minmax(0, 443fr) minmax(0, 900fr);
+  /* the intro and the benefits share one height, so their tops and bottoms line up */
+  align-items: stretch;
+  gap: 17px;
+  padding: 64px var(--side);
+}
+
+.home-approach__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 48px;
+}
+
+.home-approach__team {
+  display: flex;
+}
+
+.home-approach__team img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.home-approach__team img + img {
+  margin-left: -11px;
+}
+
+.home-approach__title {
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-approach__title-muted,
+.home-approach__body {
+  color: var(--subtle);
+}
+
+.home-approach__body {
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.home-approach__benefits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* equal rows that fill the column, as tall as the intro beside them */
+  grid-auto-rows: 1fr;
+  gap: 17px;
+}
+
+.home-benefit {
+  display: flex;
+  gap: 24px;
+  padding: 16px 16px 16px 48px;
+}
+
+.home-benefit__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 22px 0;
+}
+
+.home-benefit__copy {
+  display: flex;
+  flex-direction: column;
+  max-width: 150px;
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.home-benefit__copy strong {
+  font-weight: inherit;
+}
+
+.home-benefit__copy span {
+  color: var(--subtle);
+}
+
+.home-benefit__number {
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.home-benefit__chart {
+  flex: none;
+  width: 193px;
+  height: 152px;
+}
+
+/* ---------- Our process ---------- */
+
+.home-process {
+  padding: 0 var(--side) 40px;
+}
+
+.home-process__card {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding: 80px 64px;
+  border-radius: var(--radius);
+  /*
+    ink at 90%: the paper and grain show through. Any more and the 12px grey dates on the
+    lit Day cells drop under 4.5:1 over the brightest patches of paper.
+  */
+  background: rgb(17 17 17 / 0.9);
+  color: var(--white);
+}
+
+.home-process__title-muted {
+  color: rgb(255 255 255 / 0.2);
+}
+
+.home-timeline {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.home-day {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 14px;
+  border: 1px solid var(--line-on-dark);
+  border-radius: var(--radius);
+  background: rgb(255 255 255 / 0.03);
+  white-space: nowrap;
+}
+
+.home-day--milestone {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.home-day__label {
+  font-size: 14px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--accent-warm);
+}
+
+.home-day__date {
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--subtle);
+}
+
+.home-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 48px;
+}
+
+.home-step {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-on-dark);
+}
+
+.home-step__label {
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--accent-warm);
+}
+
+.home-step__title {
+  font-size: clamp(30px, 2.8cqw, 40px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-step__body {
+  font-size: clamp(18px, 1.6cqw, 23px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--subtle);
+}
+
+.home-process__closing {
+  max-width: 900px;
+  font-size: clamp(30px, 3.34cqw, 48px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-process__closing-muted {
+  color: rgb(255 255 255 / 0.35);
+}
+
+/* ---------- Our work ---------- */
+
+.home-work {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 96px var(--side) 80px;
+}
+
+.home-work__intro {
+  padding-left: 48px;
+}
+
+.home-work__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.home-work__item {
+  aspect-ratio: 1328 / 876;
+  overflow: hidden;
+  border-radius: var(--radius-inner);
+}
+
+.home-work__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-work__slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  border: 1.5px dashed var(--line);
+  background: rgb(255 255 255 / 0.6);
+  text-align: center;
+}
+
+.home-work__slot img {
+  width: 40px;
+  height: 40px;
+}
+
+.home-work__slot-title {
+  font-size: 23px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.home-work__slot-date {
+  font-size: clamp(24px, 2.5cqw, 36px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--muted);
+}
+
+/* ---------- Footer ---------- */
+
+.home-footer__main {
+  display: flex;
+  justify-content: space-between;
+  gap: 64px;
+  /* the torn sheet above already sets the footer apart */
+  padding: 40px var(--side) 48px;
+}
+
+.home-footer__pitch {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.home-footer__pitch-text {
+  max-width: 600px;
+  font-size: clamp(32px, 3.34cqw, 48px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.home-footer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  width: 100%;
+  max-width: 424px;
+}
+
+.home-footer__links {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.home-footer__group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.home-footer__group:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.home-footer__group-title {
+  color: var(--muted);
+}
+
+.home-footer__group ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-footer__group a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.home-footer__group a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-footer__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-footer__language {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px 14px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--icon-button);
+  color: var(--white);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.home-footer__team {
+  display: flex;
+  gap: 8px;
+}
+
+.home-footer__team li {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.home-footer__team li > img:first-child {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.home-footer__badge {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+}
+
+.home-footer__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px var(--side);
+  background: var(--accent);
+  color: var(--white);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* ---------- Smaller screens ---------- */
+
+@media (max-width: 1180px) {
+  .home-approach {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-timeline {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .home-footer__main {
+    flex-direction: column;
+  }
+}
+
+/* the hero composition stops scaling and stacks */
+@media (max-width: 820px) {
+  html.home {
+    --side: 16px;
+    --radius-inner: 24px;
+  }
+
+  .home-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    height: auto;
+    min-height: max(640px, 100svh);
+    padding: 24px var(--side);
+  }
+
+  .home-hero__bar,
+  .home-hero__headline,
+  .home-hero__offer,
+  .home-hero__wordmark {
+    position: static;
+    width: auto;
+  }
+
+  .home-hero__logo {
+    width: 48px;
+  }
+
+  .home-hero__headline {
+    margin-top: 64px;
+    font-size: 36px;
+  }
+
+  .home-hero__offer {
+    gap: 22px;
+  }
+
+  .home-hero__amount {
+    font-size: 56px;
+  }
+
+  .home-hero__wordmark {
+    width: 100%;
+    margin-top: auto;
+  }
+
+  .home-approach {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .home-approach__intro {
+    padding: 32px 24px;
+  }
+
+  .home-approach__benefits,
+  .home-steps,
+  .home-work__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-benefit {
+    padding-left: 24px;
+  }
+
+  .home-process__card {
+    gap: 48px;
+    padding: 48px 24px;
+  }
+
+  .home-steps {
+    gap: 40px;
+  }
+
+  .home-work {
+    padding-top: 64px;
+  }
+
+  .home-work__intro {
+    padding-left: 0;
+  }
+
+  .home-footer__main {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-benefit__chart {
+    width: 120px;
+    height: auto;
+    align-self: center;
+  }
+
+  .home-footer__meta {
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .home-footer__bar {
+    flex-direction: column;
+  }
+}

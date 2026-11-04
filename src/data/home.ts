@@ -1,0 +1,233 @@
+/** Home page (/): copy and assets from the "Redraft" group in the Figma file; the images are in public/assets/ */
+
+import { REDRAFT_LOGO_EYE, REDRAFT_LOGO_PATHS as P } from "@/data/redraft-logo.ts";
+
+const asset = (name: string) => `${import.meta.env.BASE_URL}assets/${name}`;
+
+export interface HomeLink {
+  label: string;
+  href: string;
+}
+
+export interface HomeBenefit {
+  title: string;
+  description: string;
+  number: string;
+}
+
+export interface HomeDay {
+  /** Milestone label shown above the date ("Day 1"), only on milestone days */
+  label?: string;
+  date: string;
+}
+
+export interface HomeStep {
+  label: string;
+  title: string;
+  body: string;
+}
+
+export interface HomeProject {
+  image: string;
+  alt: string;
+}
+
+export interface HomePerson {
+  name: string;
+  avatar: string;
+  footerAvatar: string;
+}
+
+/** a piece of paper in the pile at the foot of the page */
+export interface HomePaperPiece {
+  src: string;
+  /** natural size in pixels */
+  width: number;
+  height: number;
+  /** where it lies, in design pixels on a 1440-wide frame: its centre from the left, its bottom from the frame's */
+  x: number;
+  bottom: number;
+  /** degrees */
+  rotate: number;
+}
+
+const piece = (n: number, width: number, height: number, x: number, bottom: number, rotate = 0): HomePaperPiece => ({
+  src: asset(`paper-ball-${n}.png`),
+  width,
+  height,
+  x,
+  bottom,
+  rotate,
+});
+
+/** back to front: flat sheets on the desk, a row of balls behind, a lower row in front */
+const PAPER_PILE: HomePaperPiece[] = [
+  piece(5, 304, 221, 170, -70, -8),
+  piece(2, 269, 250, 520, -100, -14),
+  piece(20, 303, 207, 830, -80, 6),
+  piece(17, 236, 244, 1260, -100, 12),
+  piece(11, 179, 199, 70, 10),
+  piece(18, 246, 226, 330, 30),
+  piece(1, 251, 279, 640, 40),
+  piece(8, 213, 256, 860, 50, 8),
+  piece(19, 232, 222, 1060, 30),
+  piece(12, 190, 217, 1250, 20, -6),
+  piece(15, 138, 133, 1410, 0),
+  piece(4, 159, 177, 40, -60),
+  piece(13, 152, 175, 200, -70),
+  piece(7, 118, 135, 380, -60),
+  piece(21, 189, 187, 490, -50),
+  piece(16, 127, 137, 600, -90),
+  piece(3, 180, 202, 740, -60),
+  piece(6, 176, 195, 960, -55),
+  piece(10, 116, 116, 1100, -80),
+  piece(14, 148, 153, 1180, -70),
+  piece(9, 153, 154, 1340, -60),
+];
+
+export const HOME_ASSETS = {
+  /**
+   * The "Animation" group in Figma, split into parts by `pnpm logo:build`: the resting logo
+   * (state 1), the melted logo (2), the character (3) and its wink (4)
+   */
+  logoAnimation: {
+    logo: { src: asset("logo-state-1.png"), width: P.width, height: P.logoHeight },
+    melted: { top: { src: asset("logo-state-2-top.png"), width: P.width, height: P.bar.height }, bar: P.bar.outline },
+    face: {
+      top: { src: asset("logo-state-3-top.png"), width: P.width, height: P.p.height },
+      p: P.p.outline,
+      mouth: P.p.mouth,
+      pupil: { src: asset("logo-state-3-pupil.png"), ...REDRAFT_LOGO_EYE.pupil },
+      lid: { src: asset("logo-state-4-lid.png"), ...REDRAFT_LOGO_EYE.lid },
+    },
+  },
+  wordmark: asset("wordmark.svg"),
+  texture: asset("texture.jpg"),
+  /** crumpled paper that fades into the page's paper as it scrolls (from the torn-sheet photo) */
+  paperCrumple: asset("paper-crumple.jpg"),
+  /** the owner's crumpled paper, torn off onto a desk at its foot: where the paper ends above the footer */
+  paperSheet: { src: asset("paper-crumpled-sheet-wide.jpg"), width: 2880, height: 2385 },
+  /** paper cut out of the paper-balls photo, piled at the foot of the page */
+  paperPile: PAPER_PILE,
+  grain: asset("grain.png"),
+  iconChat: asset("icon-chat.svg"),
+  iconSound: asset("icon-sound.svg"),
+  iconUser: asset("icon-user.svg"),
+  iconMenu: asset("icon-menu.svg"),
+  arrow: asset("arrow.svg"),
+  arrowOnAccent: asset("arrow-on-accent.svg"),
+  chart: asset("chart.svg"),
+  emptySlot: asset("empty-slot.svg"),
+  caret: asset("caret.svg"),
+  linkedIn: asset("linkedin.svg"),
+  teamMark: asset("team-mark.svg"),
+};
+
+export const HOME = {
+  brand: "1BRAND",
+  hero: {
+    headline: "Your custom website, live in 10 days.",
+    headlineMuted: "A team behind your growth.",
+    priceFrom: "From",
+    price: "€89",
+    pricePeriod: "/month",
+  },
+  primaryCta: { label: "Book a call", caption: "20min – No commitment", href: "#contact" },
+  secondaryCta: { label: "Explore our plans", href: "#plans" },
+  team: [
+    { name: "Adrien", avatar: asset("avatar-adrien-approach.png"), footerAvatar: asset("avatar-adrien.png") },
+    { name: "Agathe", avatar: asset("avatar-agathe-approach.png"), footerAvatar: asset("avatar-agathe.png") },
+  ] satisfies HomePerson[],
+  approach: {
+    title: "A website that works for you.",
+    titleMuted: "Not the other way around.",
+    body: "Your tailor-made website is online in 10 days, with no setup fee. Your budget goes to what matters: analysing it, improving it and turning it into a real asset. From month 13, it is yours.",
+    cta: { label: "Get started", href: "#plans" },
+    benefits: [
+      { title: "Performance", description: "Designed to be visible. Built to be useful.", number: "01." },
+      { title: "Subscription", description: "Website creation included. A predictable budget.", number: "02." },
+      { title: "Improvement", description: "Your website gets better. Every month.", number: "03." },
+      { title: "Ownership", description: "Your website is yours from month 13.", number: "04." },
+    ] satisfies HomeBenefit[],
+  },
+  process: {
+    eyebrow: "Our process, in 10 days",
+    title: "A simple process",
+    titleMuted: "in three steps.",
+    days: [
+      { label: "Day 1", date: "Wed, Nov 4" },
+      { date: "Thu, Nov 5" },
+      { date: "Fri, Nov 6" },
+      { label: "Day 4", date: "Mon, Nov 9" },
+      { date: "Tue, Nov 10" },
+      { date: "Thu, Nov 12" },
+      { label: "Day 7", date: "Fri, Nov 13" },
+      { date: "Mon, Nov 16" },
+      { date: "Tue, Nov 17" },
+      { label: "Day 10", date: "Wed, Nov 18" },
+    ] satisfies HomeDay[],
+    steps: [
+      {
+        label: "Step 01",
+        title: "You share the essentials.",
+        body: "A simple 5-minute questionnaire helps us understand your business, your goals and what your website needs to achieve.",
+      },
+      {
+        label: "Step 02",
+        title: "You discover a first design.",
+        body: "We present a fully developed proposal, then refine it with you based on your feedback.",
+      },
+      {
+        label: "Step 03",
+        title: "Your website comes to life.",
+        body: "Once you approve the result, we handle development, testing and launch.",
+      },
+    ] satisfies HomeStep[],
+    closingMuted: "Going live is just one step.",
+    closing: "The journey continues to turn your website into a real",
+    closingAccent: "asset",
+  },
+  work: {
+    eyebrow: "Our work",
+    title: "Made for you.",
+    titleMuted: "Without limits.",
+    projects: [
+      { image: asset("project-1.png"), alt: "Executive recruitment website" },
+      { image: asset("project-2.png"), alt: "Alma Vera studio website" },
+      { image: asset("project-3.png"), alt: "Pipoulette website" },
+      { image: asset("project-4.png"), alt: "CB1 signalling inhibitors website" },
+      { image: asset("project-5.png"), alt: "Cinema website" },
+      { image: asset("project-6.png"), alt: "Euphorie website" },
+      { image: asset("project-7.png"), alt: "Events agency website" },
+    ] satisfies HomeProject[],
+    slotTitle: "Your website, ready on",
+    slotDate: "Wednesday, November 18, 2026",
+  },
+  footer: {
+    pitchMuted: "This is only the end of the page.",
+    pitch: "Imagine what comes next.",
+    explore: {
+      title: "Explore",
+      links: [
+        { label: "Websites by subscription", href: "#" },
+        { label: "How we create it", href: "#" },
+        { label: "Our work", href: "#work" },
+        { label: "Pricing", href: "#plans" },
+        { label: "FAQ", href: "#" },
+        { label: "Resources", href: "#" },
+      ] satisfies HomeLink[],
+    },
+    legal: {
+      title: "Legal",
+      links: [
+        { label: "Sitemap", href: "#" },
+        { label: "Legal notice", href: "#" },
+        { label: "Privacy", href: "#" },
+        { label: "Terms", href: "#" },
+        { label: "Cookies", href: "#" },
+      ] satisfies HomeLink[],
+    },
+    language: "EN · EUR (€)",
+    copyright: "© 1BRAND 2027 — All rights reserved.",
+  },
+};

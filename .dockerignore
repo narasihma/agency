@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.github
+.agents
+.vscode
+.env
+.env.*
+!.env.example
+docs
+*.log
+.DS_Store
+Dockerfile
+compose.yaml
+.dockerignore

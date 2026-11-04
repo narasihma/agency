@@ -1,0 +1,12 @@
+/*
+  fills its parent (the paper it crumples), which needs a position. A few pixels larger on every
+  side, so the stop-motion nudges never show an edge. Multiplied, so the photo's white vanishes
+  into the paper and only its folds and shadows show.
+*/
+.crumple-paper {
+  position: absolute;
+  inset: -4px;
+  background: center / cover no-repeat;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
