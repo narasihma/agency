@@ -2,6 +2,18 @@
 
 Repository changes, newest first.
 
+## 2026-11-10: Redraft work carousel: onlookers reverted
+
+- **Why:** the owner found the onlookers an interesting idea but asked to go back to what it was.
+- **What changed:** `crowd.ts` and `seeded.ts` are deleted, and `WorkCarousel.tsx`, `WorkCarousel.css`, `RedraftPage.tsx` and `AGENTS.md` are back as committed in `f2a0eac`: the RPM shift lights are under the row again. The entry below records the trial.
+
+## 2026-11-10: Redraft work carousel: paper onlookers instead of the shift lights (a trial, reverted)
+
+- **Why:** the owner wanted to try out a visual metaphor for "head-turning design" (after an article on visual metaphors): the work as the target, heads that turn as the source. The RPM shift lights were a metaphor with nothing tying them to the agency, so the onlookers take their place.
+- **What it is:** a new `onlookers` option on `WorkCarousel` (helpers in `crowd.ts`; the seeded random generator moved to `seeded.ts` so both share it). A crowd of little cut-paper heads (45 on a 1440 screen, 15 on a phone) stands in a front and a back row across the width under the cards. Each is an SVG cut in straight snips: paper tones for faces, darker paper for necks and ears, ink, brown or kraft hair (cropped, a bun, a hat, or none), an "o" of a mouth, and a small paper shadow. Their looks are seeded by their place, so they stay the same across reloads and resizes.
+- **How they turn:** each head works out the angle up to the current card's middle and shows one of 7 takes, from full profile left to full profile right, with eyes, nose and mouth moving towards the side it faces. A turn plays in stop motion: one take per beat at 10 a second, through every take in between, after a short reaction (0.03 to 0.2s, plus up to 0.35s across the row from where they look), so a turn ripples out from the card. Every new take is cut afresh, so turning heads boil like the cards' sides and still ones rest. While the cards fly past, the crowd watches the stream in the middle of the view, a little ahead of where it is going. Every 1.4 to 4 seconds someone blinks. With reduced motion the heads face where they look at once, and nobody blinks.
+- **Page:** the Redraft work section passes `onlookers` instead of `tachLabel="RPM"`. The shift lights stay in the component as an option.
+
 ## 2026-11-09: Redraft work carousel: no slider, an endless loop
 
 - **Why:** the owner asked to remove the slider altogether and have the cards loop endlessly.

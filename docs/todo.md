@@ -6,6 +6,10 @@ Items from the site owner, in the order given. When one is finished, tick it, ad
 
 ## Done
 
+- [x] **44. Redraft work carousel: revert 43, back to the RPM lights** (added 2026-11-10, done 2026-11-10). The onlookers and their code are gone; the carousel is as committed in `f2a0eac`. See `version-history.md`.
+
+- [x] **43. Redraft work carousel: try out the "head-turning" visual metaphor, a crowd of paper heads under the cards that turn towards the current one, instead of the RPM lights** (added 2026-11-10, done 2026-11-10, reverted in 44). A front and a back row of cut-paper onlookers turned in stop motion to look at the current card. An interesting idea, but not it.
+
 - [x] **42. Redraft work carousel: remove the slider altogether and make the cards loop endlessly** (added 2026-11-09, done 2026-11-09). No bar; the cards wrap round endlessly with the middle one in focus, on desktop and touch alike. See `version-history.md`.
 
 - [x] **41. Redraft work carousel: randomise the cards' edge boil, it looks too cyclical** (added 2026-11-09, done 2026-11-09). Every recut is new, and each card and bar part changes on its own irregular clock. See `version-history.md`.
