@@ -1,8 +1,11 @@
+import { useRef } from "react";
 import ActionButton from "@/components/ActionButton";
 import CrumplePaper from "@/components/CrumplePaper";
 import MorphLogo from "@/components/MorphLogo";
+import WorkCarousel from "@/components/WorkCarousel";
 import { REDRAFT, REDRAFT_ASSETS as A } from "@/data/redraft.ts";
 import "./RedraftPage.css";
+import usePaperTakes from "./usePaperTakes.ts";
 
 const ICON_BUTTONS = [
   { icon: A.iconChat, label: "Chat with us", accent: true },
@@ -11,18 +14,18 @@ const ICON_BUTTONS = [
   { icon: A.iconMenu, label: "Menu" },
 ];
 
-/** the pile's pieces are drawn a little larger than in their photo */
-const PILE_SCALE = 1.2;
-
 /** Redraft preview (/redraft/): the "Redraft" group from the Figma file, built as a page */
 export default function RedraftPage() {
   const { hero, approach, process, work, footer } = REDRAFT;
+  const paper = useRef<HTMLDivElement>(null);
+  const sheet = useRef<HTMLImageElement>(null);
+  usePaperTakes([paper, sheet]);
 
   return (
     <>
       {/* outside .redraft-page: its container query would pin these fixed layers to it instead of the window */}
       {/* the crumpling sits inside the paper, so it drifts with it */}
-      <div className="rd-paper" style={{ "--texture": `url(${A.texture})` }} aria-hidden="true">
+      <div ref={paper} className="rd-paper" style={{ "--texture": `url(${A.texture})` }} aria-hidden="true">
         <CrumplePaper src={A.paperCrumple} />
       </div>
       <div className="rd-grain" aria-hidden="true">
@@ -159,18 +162,29 @@ export default function RedraftPage() {
                 {work.title} <span className="rd-muted">{work.titleMuted}</span>
               </h2>
             </div>
-            <ul className="rd-work__grid">
-              {work.projects.map((p) => (
-                <li key={p.image} className="rd-work__item">
-                  <img src={p.image} alt={p.alt} width={1328} height={876} loading="lazy" />
-                </li>
-              ))}
-              <li className="rd-work__item rd-work__slot">
-                <img src={A.emptySlot} alt="" width={40} height={40} />
-                <span className="rd-work__slot-title">{work.slotTitle}</span>
-                <span className="rd-work__slot-date">{work.slotDate}</span>
-              </li>
-            </ul>
+            <WorkCarousel
+              className="rd-work__carousel"
+              label={work.eyebrow}
+              tachLabel="RPM"
+              items={[
+                ...work.projects.map((p) => ({
+                  id: p.image,
+                  title: p.title,
+                  content: <img src={p.image} alt={p.alt} width={1328} height={876} loading="lazy" />,
+                })),
+                {
+                  id: "slot",
+                  className: "rd-work__slot",
+                  content: (
+                    <>
+                      <img src={A.emptySlot} alt="" width={40} height={40} />
+                      <span className="rd-work__slot-title">{work.slotTitle}</span>
+                      <span className="rd-work__slot-date">{work.slotDate}</span>
+                    </>
+                  ),
+                },
+              ]}
+            />
           </section>
         </main>
       </div>
@@ -179,6 +193,7 @@ export default function RedraftPage() {
       <div className="rd-desk">
         <div className="rd-desk__sheet" aria-hidden="true">
           <img
+            ref={sheet}
             src={A.paperSheet.src}
             alt=""
             width={A.paperSheet.width}
@@ -241,29 +256,6 @@ export default function RedraftPage() {
                     </li>
                   </ul>
                 </div>
-              </div>
-            </div>
-            <div className="rd-pile" aria-hidden="true">
-              <div className="rd-pile__frame">
-                {A.paperPile.map((p, i) => (
-                  <img
-                    key={p.src}
-                    className="rd-pile__piece"
-                    src={p.src}
-                    alt=""
-                    width={p.width}
-                    height={p.height}
-                    loading="lazy"
-                    style={{
-                      "--x": p.x - (p.width * PILE_SCALE) / 2,
-                      "--bottom": p.bottom,
-                      "--w": p.width * PILE_SCALE,
-                      "--r": `${p.rotate}deg`,
-                      // takes start at different moments, so the pieces don't twitch in unison
-                      "--delay": `${-((i * 250) % 750)}ms`,
-                    }}
-                  />
-                ))}
               </div>
             </div>
             <div className="rd-footer__bar">

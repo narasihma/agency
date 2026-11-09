@@ -2,6 +2,109 @@
 
 Repository changes, newest first.
 
+## 2026-11-09: Redraft work carousel: no slider, an endless loop
+
+- **Why:** the owner asked to remove the slider altogether and have the cards loop endlessly.
+- **Slider gone:** the bar, its thumb and arrows, scrubbing and the bar's hand-cut ends are removed (markup, styles and script). The shift lights stay, now in the flow under the row's right end, and still slip away with the cards' drop.
+- **The loop:** there are no ends any more. The view's position is unbounded, and each card is placed by its own transform, wrapped round a seam kept half a loop from the view's middle, out of view, so no copies of the cards are needed (the eight cards span about twice the view; the component's docs note that the cards must span the view and a card or two more). Sizes are now measured exactly (`offsetWidth` rounds to whole px, which left the seam's gap 3px short). The first project starts in the middle, with the last cards, the "Your website" card first, coming round on its left. A resize keeps the current card in the middle.
+- **Current card:** the card in the middle of the view (or the hovered one, or the one stepped to with the arrow keys) is current; the size cascade runs both ways round the loop and is worked out as the cards come round. The arrow keys step to the next card round the loop and bring it to the middle; Home and End go to the first and last project. Dragging has no rubber-band ends now.
+- **Everywhere scripted:** the touch/narrow-screen native scroller is replaced by the same scripted track (vertical swipes still scroll the page); on touch a swipe flings and settles with the nearest card in the middle. The drop on scroll stays desktop only (992px and up). Without script it is still a native snapping scroller.
+- **Sizes:** the track no longer keeps spare room at its ends, so cards at rest are 24% of the view on desktop (about 490px when current, as before), 30% below 992px and 50% on phones.
+
+## 2026-11-09: Redraft work carousel: the cut boil, random instead of cyclical
+
+- **Why:** the hand-cut edges' boil looked cyclical: every card and both parts of the bar flipped together, through the same 4 cuts.
+- **What changed:** while the cards are dragged (or the bar scrubbed), each card and each part of the bar is recut afresh every time, from a random seed, so no cut comes back; and each runs on its own clock, about 3 times a second on average but each wait 35% longer or shorter at random, with the first changes scattered, so they don't change together (`CUT_BOIL` in `WorkCarousel.tsx`). At rest each still shows its own fixed cut, recut only when its size changes.
+
+## 2026-11-09: Redraft work carousel: smooth size changes
+
+- **Why:** when the focus moved, the cards jumped in size and bumped into their neighbours.
+- **Cause:** the growth (`scale`, 0.6s) and the sideways spacing (`translate`, 0.8s on another curve, and only 0.34s while a card was lifting on hover) ran on different timings, so halfway through a card was already bigger than the room made for it.
+- **What changed:** the cascade is now one `transform` (`translateX(--wc-shift) scale(--wc-scale)`) on one easing, 0.75s `cubic-bezier(0.65, 0, 0.35, 1)` (ease in and out), so a card grows and its neighbours move aside in step; every edge moves on the same curve, so the gaps stay 17px all the way through (checked in the browser while the focus moved two cards along). The hover lift keeps its own `translate` and timing.
+
+## 2026-11-09: Redraft work carousel: a bigger focused card; titles in Geist Mono at last
+
+- **Why:** the owner wanted the focused card another 20% bigger.
+- **Cascade:** the current card is drawn at 150% (was 130%), its neighbours at 125% (was 115%), the rest at 100% (`FOCUS`). The cards at rest are 28% of the row on desktop (was 26%), so the focused card is about 490px on a 1440 screen (was about 424px), with the next two and a glimpse of a fourth beside it; 33% below 992px (was 38%); 90% on phones (was 62%: the track keeps a quarter of a card spare at either end for the growth, so a phone card at rest is about half the screen and the focused one about two thirds). The room above the row grows with it (it is worked out from `FOCUS`).
+- **Titles:** the page's text reset (`p { font: inherit }`) loads after the component and had been overriding the card titles' font all along, so they were in Geist, not Geist Mono; the title rule now has two classes. On phones the titles are 10px (13px elsewhere), as they grow with the focused card.
+
+## 2026-11-09: Redraft work carousel: the bar with rounded corners and hand-cut ends
+
+- **Why:** the owner asked for the bar's corners rounded and the cards' edge effect on its sides.
+- **What changed:** the bar's track and its thumb have the cards' 4px corners (`--wc-radius`) and hand-cut ends: the same generated mask as the cards' sides (`cutMask`), cut at the track's and the thumb's own sizes, with their own seeds, and recut whenever those sizes change. Like the cards, they boil through 4 takes 3 times a second while the cards are dragged, and now also while the bar is scrubbed, and rest on their first cut otherwise. The track's look moved to a new `.wc__rail` inside the bar (which stays the hit area), so the mask doesn't clip the RPM lights above it.
+
+## 2026-11-09: Redraft work carousel: a size cascade round the focused card; the bar back as it was
+
+- **Why:** the owner wanted the others dimmed to 70%, the focused card 30% bigger, the next cards cascading down in size, and the torn bar undone, keeping only arrows in place of the < >.
+- **Dim:** the cards out of focus are at 70% opacity (was 55%).
+- **Size cascade:** the current card is drawn at 130%, its neighbours at 115%, the rest at 100% (`FOCUS` in `WorkCarousel.tsx`). The cards scale from their foot (they share a bottom line), and each moves sideways so the gaps stay 17px; the current card grows about its own middle. The changes ease over 0.6s. The track keeps room for it: above the row (30% of a card's height, plus the hover lift) and at either end (half the growth), so the first and last cards can grow without leaving the view. Positions are now measured from the track's own edge, padding included. The cards are smaller at rest to fit: 26% of the row on desktop (was 31%), 38% below 992px (was 46%), 62% on phones (was 82%), so the focused card is about the old size. The hover lift is now 12, 4 and 0px (was 50, 10 and 4): the growth does that work now, and 50px on top of it ran into the heading. Hit-testing still uses the cards' resting places, so a growing card can't flicker the hover. With reduced motion there's no cascade.
+- **Touch:** the native scroller now snaps cards to the middle, and the middle card is the current one; snapping to the start pushed the first card's growth off the screen.
+- **Bar:** the torn, boiling rail is gone; the bar is back to 18px, flat, with the solid thumb. Kept from that change: the thumb's < > are now hand-drawn arrows (static).
+- **Fix:** the page's list reset (`ul { padding: 0 }`) loads after the component's styles; the track's rule now has two classes so its padding holds.
+
+## 2026-11-09: Redraft work carousel: one card in focus, a torn bar with scribbled arrows
+
+- **Why:** the owner wanted one focused card with the rest dimmed, a thinner bar with the torn, live paper edge used across the site, and scribbled arrows instead of the < > in the thumb.
+- **One card in focus:** one card is current (`.is-current`): in colour, full strength, with the soft shadow; the others are grey and dimmed to 55% (`--wc-dim`). The current card is the hovered one (or the one stepped to with the arrow keys); otherwise the scroll decides: the card nearest a point that sweeps across the view as the carousel scrolls, from the first card's middle at the start to the last card's at the end, so every card, the first and the last too, comes into focus in turn. Same on touch (it replaces "the card in the middle"). Hovering still lifts the card and its neighbours.
+- **Bar:** the rail shows 12px tall (was 18px) inside a 20px hit area. The rail and thumb sit in a new `.wc__rail`, torn along their edges by a noise filter, the logo boil's technique: fractal noise (`0.13 0.08`, 4 octaves) pushes them about by up to 3px, with a 0.3px blur to take off the stair-steps, and its seed is redrawn 3 times a second (`BAR_BOIL`), the same pace as the cards' cut boil. The RPM lights sit outside the rail, so the filter doesn't clip them.
+- **Arrows:** the CSS chevrons are replaced by a hand-drawn arrow (a wavering shaft and a two-stroke head that overshoots), drawn once and mirrored for the right one, in white. They boil with the bar.
+
+## 2026-11-09: Redraft work carousel: slower cut boil
+
+- **Why:** the owner asked for the cards' side jitter while they move to be slower.
+- **What changed:** while a card is dragged, the hand-cut sides are recut 3 times a second (was 12; a first pass at 6 was still too fast), so each take holds for a third of a second; still 4 takes, picked at random (`CUT_BOIL.fps` in `WorkCarousel.tsx`).
+
+## 2026-11-09: Redraft: card corners, cut boils on drag, slower paper jitter
+
+- **Card corners:** every other card and box on the page (the approach cards, the process card, the day boxes, the buttons) has 4px corners (`--radius`); the work cards had 38px (24px on phones), left over from the old grid. They now use `--radius` too, and the unused `--radius-inner` is gone.
+- **Cut sides boil while dragging:** while a card is dragged, every card's hand-cut sides are recut 12 times a second, through 4 takes of its own cut picked at random (never the one it is on), like stop motion. Off the drag (and with reduced motion) they rest on the first cut. The takes are generated with the resting cut, at the cards' size (`CUT_BOIL` in `WorkCarousel.tsx`).
+- **Paper jitter at 2 a second:** the crumpled paper's side-to-side jitter moved too fast. `usePaperTakes` now jumps to a new take twice a second (was 4), so each is held for half a second; the paper and the torn sheet still move together. (A first pass slowed the film grain to 12fps by mistake; it is back at 24.)
+
+## 2026-11-09: Redraft work carousel: gentler warp, hand-cut card sides
+
+- **Why:** the warp was a bit too strong and the cards' edges too clean. The owner pointed to a dribbble card (a portfolio slider with a scissor-cut paper card) and asked for its bottom edge on our cards' sides.
+- **Warp:** about 55% of the reference's: 0.02px of bow per px/s of speed (was 0.036), capped at 64px (was 110). The filter's region reaches 80px past a card's sides (was 120).
+- **Hand-cut sides:** each card's left and right sides are cut like the reference's edge: slightly crooked straight cuts (a new direction every 18–72px), up to 3.2px in from the side, with a 0.3px jitter and an occasional notch of 0.8–2px. Every card has its own cut, seeded by its place in the row, so it stays the same between visits. The cut is an SVG mask generated by `WorkCarousel` at the cards' size, and redrawn only when that size changes. Top and bottom stay straight, and the rounded corners stay. The warp bends the cut sides with the rest of the card. It is on by default (`cutEdges` prop).
+- **Structure:** a card is now `.wc__card` (lift, colour filter, warp, shadow) around `.wc__face` (what it shows, clipped, rounded and masked), so the mask doesn't cut away the hover shadow. An item's `className` now goes on the face; the page's slot-card and image rules follow it.
+
+## 2026-11-09: Redraft work carousel: speed warp
+
+- **Why:** the owner missed the reference's speed warp when the carousel moves sideways. On aaronbrimhall.com it comes from a second script (a WebGL "keybed" that redraws the cards), which the first pass hadn't read.
+- **What changed:** while the track moves, every card bows: its top and bottom trail its middle, by 0.036px per px/s of speed, softly capped at 110px (eased in past 88px), building over about 0.1s and relaxing over about 0.3s. These are the reference's numbers. Instead of WebGL it is an SVG filter (`feDisplacementMap`, in `WorkCarousel.tsx`), so it bends every card the same way, the "Your website" card too. Its map is a one-column gradient generated at load (red = 0.5 + 0.5·s², s running down the card), and the filter's region reaches 120px past a card's sides. The filter is only switched on (`--wc-warp`, in front of the cards' colour filter) while the bend is at least 0.3px. Desktop mode only; off with reduced motion. The spool helper now takes its own rise and fall times.
+- **Not carried over (yet):** the reference also ripples the cards up and down in a travelling wave while the revs are high (up to 34px, with a 7° tilt and a flush of colour on the crests), and splits the picture into pink and cool ghosts at speed.
+
+## 2026-11-09: Redraft work section: horizontal carousel after aaronbrimhall.com
+
+- **Why:** the owner wants the behaviour of the work gallery on aaronbrimhall.com for "Our work"; the styling will be changed once the behaviour is in.
+- **Reference:** read from the site's own script (a custom track over Swiper's markup, driven by GSAP). The numbers below are his.
+- **New component:** `src/components/WorkCarousel/` (no new dependencies). On desktop with a mouse (992px and up, `hover: hover`, `pointer: fine`) a script moves the track:
+  - drag: claims after 6px sideways; past either end it gives less and less (rubber band, `max(60px, 10% of the width)`); on release it flings with the last 100ms of speed (up to 4000px/s) and glides to a stop;
+  - wheel: a sideways gesture (or shift + wheel) moves the track; vertical gestures still scroll the page (the axis is locked per gesture, 140ms apart);
+  - bar: a thumb as wide as the share of cards in view; press or drag anywhere on the bar to scrub (grabbing the thumb keeps it under the pointer);
+  - keyboard: the carousel is a focusable region; arrows, Home and End step through the cards, scrolling each into view, with a focus outline on the card;
+  - hover: the card under the pointer lifts 50px, its neighbours 10px and 4px, and it goes from grey to colour (no hover while the track moves faster than 700px/s); lifting takes 0.34s, settling 0.8s;
+  - shift lights ("RPM", over the bar's right end): 7 lights rev with the track's speed and the page's scroll speed, spool up fast and brake slowly, the last two are the redline (the page's warm yellow), flash twice at the redline, and blip when a card is hovered;
+  - scroll: the cards drop in from above one after another as the section comes into view, and fall away (with the bar) as it leaves the top, scrubbed by the scroll.
+  - On touch screens and below 992px it is a native scroller that snaps to the cards and runs out to the page's edges; the card in the middle takes its colour, and the bar scrubs it too.
+  - Reduced motion: no lifts, drop or lights, and moves jump instead of gliding.
+  - Everything is tuned by constants at the top of `WorkCarousel.tsx`; sizes and colours come from the page through `--wc-*` variables.
+- **The page:** the work grid is replaced by the carousel: the seven projects and the "Your website, ready on" card, three cards and a bit in view on desktop (`--wc-card: 31%`), two and a bit below 992px, one and a bit on phones. The cards keep the screenshots' proportions; the section clips them sideways only (`overflow-x: clip`), so they run off the page's right edge and can lift above. Each project has a `title` in `src/data/redraft.ts` (from its alt text), shown at the card's foot in Geist Mono (added to the page's fonts). The slot card's text is smaller, to fit a third-width card. The section's gap over the cards is 64px (was 48px) to leave room for the lift. Not carried over: his hover videos (we have none yet).
+
+## 2026-11-09: Redraft: the torn sheet sits tighter under the work section
+
+- **Why:** the stretch of crumpled paper between the work section and the tear was much taller than the gaps between the other sections, and it grew with the window (34% of the page width: about 490px at 1440, 830px at 2440).
+- **What changed:** the photo now hangs so its tear tops out a fixed 48px below the work section (under the section's own 80px bottom padding), at any width: `.rd-desk__sheet` `margin-top: calc(48px - 73.7%)` (was `-45.4%`; the tear's top is 89% down the photo, 73.7% of the width). The desk's grain follows (`inset: calc(48px - 73.7vw) 0 0`). The photo now starts higher behind the work cards, and still fades in over its top 40%. The footer still starts just under the tear (unchanged). Checked at 390, 1440 and 2400 wide.
+
+## 2026-11-09: Redraft: the pile of paper balls is gone
+
+- **Why:** the owner asked to scrap the paper balls below the footer.
+- **What changed:** the pile is removed: its markup (`.rd-pile`) and `PILE_SCALE` in `RedraftPage.tsx`, its styles and `rd-pile-take` animation in `RedraftPage.css`, and `RedraftPaperPiece`, `PAPER_PILE` and `REDRAFT_ASSETS.paperPile` in `src/data/redraft.ts`. The 21 cut-outs (`public/assets/redraft/paper-ball-1..21.png`) are deleted; their source photo stays in `assets-src/redraft-paper/paper-balls.png`. The footer's content now runs straight into the bar, 48px above it (the footer's own bottom padding). `AGENTS.md` no longer mentions the pile, and now points to `usePaperTakes` for the paper's stop motion.
+
+## 2026-11-09: Redraft paper: random stop-motion takes in every direction
+
+- **Why:** the paper's jitter (three takes on a 750ms loop) felt cyclical. The owner asked for movement in all four directions, 12 variations at the same pace, repeating in a random pattern.
+- **What changed:** a new hook, `src/pages/Redraft/usePaperTakes.ts`, replaces the `rd-paper-take` CSS animation (removed). 4 times a second it moves the paper (`.rd-paper`) and the crumpled-sheet photo together to one of 12 offsets: six a full pixel out (every 60°) and six at 0.6px between them (offset by 30°). Each take is picked at random and is never the one it is on, so there is no loop. It sets `translate`, so it still adds to the scroll drift's `transform`; the drift is now the paper's only CSS animation. It stops (and clears the offset) while the visitor prefers reduced motion, and follows that setting if it changes. The spare pixels around the paper and the photo are unchanged. The pile's twitch is unchanged.
+
 ## 2026-11-04: Redraft: the torn sheet at half the scale
 
 - **Why:** the folds in the torn sheet were too big. The owner supplied a version twice as wide, so at the same page width its folds are about half the size.

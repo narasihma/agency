@@ -1,0 +1,250 @@
+/*
+  Colours and sizes come from the page through these variables:
+  --wc-card (a card's width at rest, in % of the carousel), --wc-ratio (a card's height over its
+  width), --wc-gap, --wc-radius, --wc-bleed (how far the no-script scroller runs past the carousel's
+  sides, to the page's edges), --wc-dim, --wc-ink, --wc-hot (the redline lights). With script the
+  cards loop endlessly (each placed by script); without, it is a plain native scroller.
+*/
+.wc {
+  --wc-card: 30%;
+  --wc-gap: 16px;
+  --wc-radius: 16px;
+  --wc-bleed: 0px;
+  --wc-ink: #111111;
+  --wc-hot: #ffd65a;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.wc__viewport {
+  position: relative;
+  outline: none;
+}
+
+.wc__viewport:focus-visible {
+  outline: 1px solid var(--wc-ink);
+  outline-offset: 8px;
+  border-radius: var(--wc-radius);
+}
+
+/*
+  the track keeps room above the row for the current card, drawn --wc-focus times its size, and its
+  hover lift (both set by script); the cards scale from their foot. (Two classes, so a page's list
+  reset can't take the padding away.)
+*/
+.wc .wc__track {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--wc-gap);
+  margin: 0;
+  padding: calc(var(--wc-card) * (var(--wc-focus, 1) - 1) * var(--wc-ratio, 0.66) + var(--wc-lift-room, 0px)) 0 0;
+  list-style: none;
+}
+
+.wc__slide {
+  flex: 0 0 var(--wc-card);
+  min-width: 0;
+}
+
+.wc__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/*
+  the card lifts when hovered (--wc-lift, set by script). One card is current (.is-current: the
+  hovered one, else the one the scroll has reached): it is in colour, the rest are grey and dimmed
+  to --wc-dim. While the track moves, --wc-warp (set by script) adds the speed warp in front of the
+  colour filter.
+*/
+.wc__card {
+  position: relative;
+  border-radius: var(--wc-radius);
+  filter: var(--wc-warp,) saturate(0);
+  /*
+    the cascade (--wc-shift, --wc-scale) is one transform on one easing, so as a card grows its
+    neighbours move aside in step and the gaps stay even all the way through; the hover lift
+    (--wc-lift) is separate, with its own timing. All set by script.
+  */
+  transform-origin: 50% 100%;
+  transform: translateX(var(--wc-shift, 0px)) scale(var(--wc-scale, 1));
+  translate: 0 var(--wc-lift, 0px);
+  transition:
+    transform 0.75s cubic-bezier(0.65, 0, 0.35, 1),
+    translate 0.8s cubic-bezier(0.3, 0.1, 0.15, 1),
+    filter 0.45s ease,
+    box-shadow 0.45s ease,
+    opacity 0.45s ease;
+}
+
+/* lifting is quicker than settling back */
+.wc__card.is-rising {
+  transition-duration: 0.75s, 0.34s, 0.45s, 0.45s, 0.45s;
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1), cubic-bezier(0.5, 0, 0.2, 1), ease, ease, ease;
+}
+
+.wc.has-current .wc__card:not(.is-current) {
+  opacity: var(--wc-dim, 0.7);
+}
+
+.wc__card.is-current {
+  filter: var(--wc-warp,) saturate(1);
+  box-shadow: 0 24px 40px -24px rgb(0 0 0 / 0.5);
+}
+
+.wc__card.is-focus {
+  outline: 1px solid var(--wc-ink);
+  outline-offset: 4px;
+}
+
+/* what the card shows, its sides hand-cut by a mask (set by script); the shadow stays on the card */
+.wc__face {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--wc-radius);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.wc__card img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* two classes, so a page's text reset (p { font: inherit }) can't take the font away */
+.wc .wc__title {
+  position: absolute;
+  inset: auto 0 0;
+  margin: 0;
+  padding: 40px 20px 16px;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.45));
+  color: #ffffff;
+  font: 400 13px/1 "Geist Mono", ui-monospace, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ---------- With script: the loop, moved by script (sideways drags; vertical ones scroll the page) ---------- */
+
+.wc[data-mode="track"] .wc__viewport {
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+}
+
+.wc[data-mode="track"] .wc__slide {
+  will-change: transform;
+}
+
+.wc.is-dragging,
+.wc.is-dragging * {
+  cursor: grabbing !important;
+}
+
+/* ---------- Without script: a native scroller that snaps to the cards ---------- */
+
+.wc:not([data-mode="track"]) .wc__viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--wc-bleed);
+  /* room for the shadows, and out to the page's edges */
+  margin: -24px calc(-1 * var(--wc-bleed));
+  padding: 24px var(--wc-bleed);
+}
+
+.wc:not([data-mode="track"]) .wc__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.wc:not([data-mode="track"]) .wc__slide {
+  scroll-snap-align: center;
+}
+
+/* ---------- Shift lights: under the row's right end ---------- */
+
+.wc__bottom {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wc__tach {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.wc__tach-label {
+  color: rgb(0 0 0 / 0.4);
+  font: 400 10px/1 "Geist Mono", ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.wc__lights {
+  display: flex;
+  gap: 3px;
+}
+
+/* --on (set by script) lights it; --level is how bright it gets */
+.wc__light {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  background: rgb(0 0 0 / 0.13);
+}
+
+.wc__light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--wc-ink);
+  opacity: calc(var(--on, 0) * var(--level, 1));
+}
+
+.wc__light.is-hot::after,
+.wc__tach.is-flash .wc__light::after {
+  background: var(--wc-hot);
+  box-shadow: 0 0 6px var(--wc-hot);
+}
+
+.wc__tach.is-flash .wc__light::after {
+  opacity: 1;
+}
+
+.wc__tach.is-blank .wc__light::after {
+  opacity: 0;
+}
+
+@media (max-width: 767px) {
+  /* the cards are small at rest on phones, and the title grows with the current card */
+  .wc .wc__title {
+    padding: 28px 12px 10px;
+    font-size: 10px;
+  }
+
+  .wc__tach {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wc__card {
+    transition:
+      filter 0.45s ease,
+      box-shadow 0.45s ease;
+  }
+}

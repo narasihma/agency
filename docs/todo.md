@@ -6,6 +6,36 @@ Items from the site owner, in the order given. When one is finished, tick it, ad
 
 ## Done
 
+- [x] **42. Redraft work carousel: remove the slider altogether and make the cards loop endlessly** (added 2026-11-09, done 2026-11-09). No bar; the cards wrap round endlessly with the middle one in focus, on desktop and touch alike. See `version-history.md`.
+
+- [x] **41. Redraft work carousel: randomise the cards' edge boil, it looks too cyclical** (added 2026-11-09, done 2026-11-09). Every recut is new, and each card and bar part changes on its own irregular clock. See `version-history.md`.
+
+- [x] **40. Redraft work carousel: smooth out the jump in card sizes (they touched their neighbours)** (added 2026-11-09, done 2026-11-09). Growth and spacing now ease together over 0.75s, so the gaps hold. See `version-history.md`.
+
+- [x] **39. Redraft work carousel: the focused card another 20% bigger** (added 2026-11-09, done 2026-11-09). Now 150% (neighbours 125%), about 490px on a 1440 screen. See `version-history.md`.
+
+- [x] **38. Redraft work carousel: round the bar's corners and give its sides the cards' hand-cut edge** (added 2026-11-09, done 2026-11-09). Track and thumb have 4px corners and hand-cut ends that boil with the cards'. See `version-history.md`.
+
+- [x] **37. Redraft work carousel: dim to 70%, the focused card 30% bigger with the next cards cascading in size; the bar back to its previous design, only with arrows instead of < >** (added 2026-11-09, done 2026-11-09). See `version-history.md`.
+
+- [x] **36. Redraft work carousel: one focused card with the rest dimmed; a thinner bar with the torn, live paper edge; scribbled arrows instead of < >** (added 2026-11-09, done 2026-11-09; the torn bar reverted in 37). The hovered card, or the one the scroll has reached, is in colour and the rest dim to 55%; the bar is 12px with a boiling torn edge; the thumb has hand-drawn arrows. See `version-history.md`.
+
+- [x] **35. Redraft work carousel: slow down the cards' side jitter while they move** (added 2026-11-09, done 2026-11-09). The cut sides now change 3 times a second while dragged (was 12; 6 was still too fast). See `version-history.md`.
+
+- [x] **34. Redraft: work cards' corners to match the site's, the cut sides jittering only while dragging, and the crumpled paper's side-to-side jitter slowed down** (added 2026-11-09, done 2026-11-09). Cards at 4px like every other box; the cuts boil at 12fps only on a drag; the paper now jumps twice a second (was 4), as the owner chose. The film grain, slowed by mistake at first, is back at 24fps. See `version-history.md`.
+
+- [x] **33. Redraft work carousel: a gentler warp, and the dribbble card's hand-cut edge on our cards' sides** (added 2026-11-09, done 2026-11-09). The bow is about half as strong, and each card's sides are cut by hand, a different cut per card. See `version-history.md`.
+
+- [x] **32. Redraft work carousel: the speed warp when it moves left or right** (added 2026-11-09, done 2026-11-09). The cards now bow with the track's speed, top and bottom trailing, as on aaronbrimhall.com. See `version-history.md`.
+
+- [x] **31. Redraft work section: a horizontal carousel with aaronbrimhall.com's behaviour (styling to be changed afterwards)** (added 2026-11-09, done 2026-11-09). New `WorkCarousel` component: drag and fling, sideways wheel, a scrubbable bar, arrow keys, hover lift and colour, shift lights, and cards dropping in and out on scroll; a native snapping scroller on touch. See `version-history.md`.
+
+- [x] **30. Redraft: shorten the paper between the work section and the tear, so it sits as tight as the other sections** (added 2026-11-09, done 2026-11-09). The tear now tops out a fixed 48px below the work section at every width. See `version-history.md`.
+
+- [x] **29. Redraft: scrap the paper balls below the footer** (added 2026-11-09, done 2026-11-09). The pile, its data and its 21 cut-out images are gone; the footer ends on the bar. See `version-history.md`.
+
+- [x] **28. Redraft: the paper's jitter feels cyclical; move it in all 4 directions, 12 variations at the same pace, in a random pattern** (added 2026-11-09, done 2026-11-09). The paper and the crumpled sheet now jump together, 4 times a second, to one of 12 offsets picked at random. See `version-history.md`.
+
 - [x] **27. Redraft: the torn page's scale is too big; use the owner's double-width image instead** (added 2026-11-04, done 2026-11-04). The new photo's folds are about half the size; the tear stays in the same place above the footer. See `version-history.md`.
 
 - [x] **26. Redraft: bring back the 4-a-second stop-motion jitter on the paper background** (added 2026-11-04, done 2026-11-04). The whole paper (texture and crumple) and the crumpled sheet now step through three takes 4 times a second, in sync. See `version-history.md`.

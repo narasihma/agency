@@ -30,6 +30,8 @@ export interface RedraftStep {
 export interface RedraftProject {
   image: string;
   alt: string;
+  /** shown on the card in the work carousel */
+  title: string;
 }
 
 export interface RedraftPerson {
@@ -37,53 +39,6 @@ export interface RedraftPerson {
   avatar: string;
   footerAvatar: string;
 }
-
-/** a piece of paper in the pile at the foot of the page */
-export interface RedraftPaperPiece {
-  src: string;
-  /** natural size in pixels */
-  width: number;
-  height: number;
-  /** where it lies, in design pixels on a 1440-wide frame: its centre from the left, its bottom from the frame's */
-  x: number;
-  bottom: number;
-  /** degrees */
-  rotate: number;
-}
-
-const piece = (n: number, width: number, height: number, x: number, bottom: number, rotate = 0): RedraftPaperPiece => ({
-  src: asset(`paper-ball-${n}.png`),
-  width,
-  height,
-  x,
-  bottom,
-  rotate,
-});
-
-/** back to front: flat sheets on the desk, a row of balls behind, a lower row in front */
-const PAPER_PILE: RedraftPaperPiece[] = [
-  piece(5, 304, 221, 170, -70, -8),
-  piece(2, 269, 250, 520, -100, -14),
-  piece(20, 303, 207, 830, -80, 6),
-  piece(17, 236, 244, 1260, -100, 12),
-  piece(11, 179, 199, 70, 10),
-  piece(18, 246, 226, 330, 30),
-  piece(1, 251, 279, 640, 40),
-  piece(8, 213, 256, 860, 50, 8),
-  piece(19, 232, 222, 1060, 30),
-  piece(12, 190, 217, 1250, 20, -6),
-  piece(15, 138, 133, 1410, 0),
-  piece(4, 159, 177, 40, -60),
-  piece(13, 152, 175, 200, -70),
-  piece(7, 118, 135, 380, -60),
-  piece(21, 189, 187, 490, -50),
-  piece(16, 127, 137, 600, -90),
-  piece(3, 180, 202, 740, -60),
-  piece(6, 176, 195, 960, -55),
-  piece(10, 116, 116, 1100, -80),
-  piece(14, 148, 153, 1180, -70),
-  piece(9, 153, 154, 1340, -60),
-];
 
 export const REDRAFT_ASSETS = {
   /**
@@ -106,10 +61,7 @@ export const REDRAFT_ASSETS = {
   /** crumpled paper that fades into the page's paper as it scrolls (from the torn-sheet photo) */
   paperCrumple: asset("paper-crumple.jpg"),
   /** the owner's crumpled paper, torn off onto a desk at its foot: where the paper ends above the footer */
-  paperSheet: { src: asset("paper-crumpled-sheet-wide.jpg"), width: 2880, height: 2385 },
-  /** paper cut out of the paper-balls photo, piled at the foot of the page */
-  paperPile: PAPER_PILE,
-  grain: asset("grain.png"),
+  paperSheet: { src: asset("paper-crumpled-sheet-wide.jpg"), width: 2880, height: 2385 },  grain: asset("grain.png"),
   iconChat: asset("icon-chat.svg"),
   iconSound: asset("icon-sound.svg"),
   iconUser: asset("icon-user.svg"),
@@ -192,13 +144,13 @@ export const REDRAFT = {
     title: "Made for you.",
     titleMuted: "Without limits.",
     projects: [
-      { image: asset("project-1.png"), alt: "Executive recruitment website" },
-      { image: asset("project-2.png"), alt: "Alma Vera studio website" },
-      { image: asset("project-3.png"), alt: "Pipoulette website" },
-      { image: asset("project-4.png"), alt: "CB1 signalling inhibitors website" },
-      { image: asset("project-5.png"), alt: "Cinema website" },
-      { image: asset("project-6.png"), alt: "Euphorie website" },
-      { image: asset("project-7.png"), alt: "Events agency website" },
+      { image: asset("project-1.png"), alt: "Executive recruitment website", title: "Executive recruitment" },
+      { image: asset("project-2.png"), alt: "Alma Vera studio website", title: "Alma Vera" },
+      { image: asset("project-3.png"), alt: "Pipoulette website", title: "Pipoulette" },
+      { image: asset("project-4.png"), alt: "CB1 signalling inhibitors website", title: "CB1 inhibitors" },
+      { image: asset("project-5.png"), alt: "Cinema website", title: "Cinema" },
+      { image: asset("project-6.png"), alt: "Euphorie website", title: "Euphorie" },
+      { image: asset("project-7.png"), alt: "Events agency website", title: "Events agency" },
     ] satisfies RedraftProject[],
     slotTitle: "Your website, ready on",
     slotDate: "Wednesday, November 18, 2026",
