@@ -287,10 +287,12 @@ html.redraft body {
   outline-offset: 3px;
 }
 
+/* on the left, above the price and the buttons; anthracite, so it stands off the light paper */
 .rd-hero__headline {
+  color: var(--accent);
   position: absolute;
-  top: calc(267 * var(--u));
-  right: calc(43 * var(--u));
+  top: calc(292 * var(--u));
+  left: calc(43 * var(--u));
   width: calc(470 * var(--u));
   font-size: calc(48 * var(--u));
   line-height: 1;
@@ -299,7 +301,7 @@ html.redraft body {
 
 .rd-hero__offer {
   position: absolute;
-  top: calc(402 * var(--u));
+  top: calc(480 * var(--u));
   left: calc(43 * var(--u));
   display: flex;
   flex-direction: column;
@@ -309,6 +311,7 @@ html.redraft body {
 .rd-hero__price {
   display: flex;
   flex-direction: column;
+  color: var(--accent);
 }
 
 .rd-hero__from {
@@ -329,12 +332,31 @@ html.redraft body {
   opacity: 0.6;
 }
 
-.rd-hero__wordmark {
+/* the hero's copy stays over the shredded sheet's strips */
+.rd-hero > :not(.rd-hero__shred) {
+  z-index: 1;
+}
+
+/*
+  the shredded sheet, on the right, the left column's partner: the stage reaches past the sheet so
+  the strips have room to drift; the sheet itself is 78% of its width (746 × 347 at 1440), 58 from
+  the left column (571 to 1317), its top on the headline's capitals (300) and its bottom on the
+  buttons' (647). It stays 80 inside the bar's right edge, so the drifting strips (they spread
+  about 90 past the sheet's sides) stay on screen
+*/
+.rd-hero__shred {
+  --shred-fill: 0.78;
+  /* the canvas reaches past the stage, so the widest drift is never cut off at its edges */
+  --shred-bleed: calc(100 * var(--u));
+  --shred-font: var(--font-ui);
+  --shred-mono: "Geist Mono", ui-monospace, monospace;
+  --shred-paper: #f5f4f0;
+  --shred-ink: var(--ink);
   position: absolute;
-  top: calc(628.5 * var(--u));
-  left: calc(44.6 * var(--u));
-  width: calc(1312 * var(--u));
-  height: auto;
+  top: calc(193.5 * var(--u));
+  left: calc(465.8 * var(--u));
+  width: calc(956.4 * var(--u));
+  height: calc(560 * var(--u));
 }
 
 /* ---------- Our approach ---------- */
@@ -772,12 +794,11 @@ html.redraft body {
   }
 }
 
-/* the hero composition stops scaling and stacks */
-@media (max-width: 820px) {
-  html.redraft {
-    --side: 16px;
-  }
-
+/*
+  phones and tablets: the hero composition stops scaling and stacks, and the shredded sheet is the
+  narrow one (ShredSheet switches at the same width, through `hero.sheet.narrow.query`)
+*/
+@media (max-width: 1024px) {
   .rd-hero {
     display: flex;
     flex-direction: column;
@@ -787,11 +808,12 @@ html.redraft body {
     padding: 24px var(--side);
   }
 
+  /* in the flow, but still positioned, so they stay over the sheet's canvas where it bleeds */
   .rd-hero__bar,
   .rd-hero__headline,
-  .rd-hero__offer,
-  .rd-hero__wordmark {
-    position: static;
+  .rd-hero__offer {
+    position: relative;
+    inset: auto;
     width: auto;
   }
 
@@ -799,9 +821,23 @@ html.redraft body {
     width: 48px;
   }
 
+  /* the animation first, then the headline, then the price and buttons */
+  .rd-hero__bar {
+    order: 0;
+  }
+
+  .rd-hero__shred {
+    order: 1;
+  }
+
   .rd-hero__headline {
-    margin-top: 64px;
+    order: 2;
+    max-width: 560px;
     font-size: 36px;
+  }
+
+  .rd-hero__offer {
+    order: 3;
   }
 
   .rd-hero__offer {
@@ -812,9 +848,26 @@ html.redraft body {
     font-size: 56px;
   }
 
-  .rd-hero__wordmark {
-    width: 100%;
-    margin-top: auto;
+  /*
+    the sheet opens the hero under the bar: edge to edge on phones, at most 640px wide on tablets;
+    its canvas bleeds 120px all round for the drift
+  */
+  .rd-hero__shred {
+    --shred-fill: 0.78;
+    --shred-bleed: 120px;
+    position: relative;
+    inset: auto;
+    align-self: center;
+    width: min(100% + 2 * var(--side), 640px);
+    height: auto;
+    aspect-ratio: 1 / 0.92;
+    margin: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  html.redraft {
+    --side: 16px;
   }
 
   .rd-approach {

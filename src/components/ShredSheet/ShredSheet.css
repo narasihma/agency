@@ -1,0 +1,28 @@
+/*
+  The stage fills its box (the page sizes and places it); the canvas fills the stage and reaches
+  --shred-bleed past it all round, so drifting strips and their shadows have room. From the page:
+  --shred-fill (the sheet's width as a share of the stage's, 0.6 by default), --shred-bleed,
+  --shred-font and --shred-mono (font stacks for the type and the small print), --shred-paper,
+  --shred-ink.
+*/
+.shred {
+  position: relative;
+  outline: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shred__canvas {
+  position: absolute;
+  inset: calc(-1 * var(--shred-bleed, 0px));
+  display: block;
+  width: calc(100% + 2 * var(--shred-bleed, 0px));
+  height: calc(100% + 2 * var(--shred-bleed, 0px));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.shred[data-ready] .shred__canvas {
+  opacity: 1;
+}

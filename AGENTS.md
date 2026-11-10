@@ -24,7 +24,7 @@ src/
     main.tsx                  entrypoint: imports @/styles/global.css, mounts the page into #root
     <Name>Page.tsx            page component (HomePage)
     <Name>Page.css            page-level styles
-  components/<Name>/          one folder per component, named after it, usable from any page (ActionButton, CrumplePaper, MorphLogo, WorkCarousel)
+  components/<Name>/          one folder per component, named after it, usable from any page (ActionButton, CrumplePaper, MorphLogo, ShredSheet, WorkCarousel)
     index.ts                  re-exports the component (and any public types)
     <Name>.tsx                the component
     <Name>.css                its styles
@@ -47,6 +47,7 @@ Key files:
 - `src/components/ActionButton/ActionButton.tsx` - the white handle + arrow + label link, in `primary`, `ghost` and `outline` variants
 - `src/components/CrumplePaper/CrumplePaper.tsx` - a photo of crumpled paper multiplied over its parent, fading in as the page scrolls (none at the top, full near the end). On the Redraft page it sits inside `.rd-paper`, so it drifts with the paper and shares its stop-motion takes (`src/pages/Redraft/usePaperTakes.ts`). The page then ends on a desk (`.rd-desk`): the owner's crumpled sheet tearing off just above the footer. The photos' sources are in `assets-src/redraft-paper/`
 - `src/components/WorkCarousel/WorkCarousel.tsx` - endless horizontal carousel after the work gallery on aaronbrimhall.com (the Redraft work section). A script moves it everywhere: drag and fling, sideways wheel or shift + wheel, arrow keys; on touch a swipe settles with a card in the middle. The cards loop: each slide is placed by its own transform, wrapped round a seam kept half a loop from the view's middle (so the cards together must span the view and a card or two more). The middle card (or the hovered one) is current: in colour and 50% bigger, its neighbours either side 25% bigger (a size cascade, `FOCUS`, the row re-spaced round them on one easing so the gaps hold), the rest dimmed to 70%; the hovered card lifts a little. The cards bow with the speed (an SVG displacement filter), their sides are hand-cut (a generated SVG mask per card, on `.wc__face`, recut afresh at random about 3 times a second, each on its own clock, only while dragged), shift lights under the row rev with the speed, and on desktop the cards drop in and out with the section's scroll. Without script it is a native snapping scroller. All the tuning is in constants at the top; sizes and colours come from the page through `--wc-*` variables
+- `src/components/ShredSheet/ShredSheet.tsx` - a printed sheet shredded into vertical strips that float apart in 3D (the Redraft hero's image). The scene is three.js in `scene.ts`, loaded with a dynamic `import()`: the strips drift, turn, twist and curl on their own slow clocks, lit from the top left with soft shadows on the page; hover, keyboard focus or a tap brings them together in a ripple from the pointer so the type printed across the sheet can be read. On load the sheet shows whole for a moment, then comes apart; with reduced motion it lies whole. The strips' long sides are hand-cut like the work cards' edges (`EDGE`). The type is drawn on a canvas texture once the page's fonts are in, each line optionally starting a share of its first letter's width past the sheet's left edge (`cut`, as if the shredder took it) and the longest line's last letter optionally sliced by the right edge (`cutEnd`); the sheet's proportions come from `aspect`; a `narrow` layout with its own media query replaces it on small screens (the Redraft hero uses it up to 1024px, where the hero stacks); copy comes from `hero.sheet` in `src/data/redraft.ts`; the canvas may bleed past the stage (`--shred-bleed`); sizes and colours from `--shred-*` variables. All the tuning is in constants at the top of `scene.ts`
 - `src/components/MorphLogo/MorphLogo.tsx` - logo link that, on hover or focus, turns the logo into its character and back: a gooey SVG morph with a quarter turn from 1 to 2, a path morph from state 2's bar to state 3's P, and a wink into state 4's closed eye. The 3.3s timeline (`CYCLE`), keyframes, easings and the path interpolation are in `morph.ts`
 - `scripts/redraft-logo.ts` (`pnpm logo:build`) - splits the Figma logo states in `assets-src/redraft-logo/` into the parts in `public/assets/redraft/logo-*.png` and traces the bar and P outlines into `src/data/redraft-logo.ts` (generated: don't edit by hand). Run it after changing those images
 ### Structure rules
@@ -73,7 +74,7 @@ Create `src/components/<Name>/<Name>.tsx` with a default export and a props inte
 
 ## Dependencies
 
-- Runtime: React 19 and React DOM 19
+- Runtime: React 19 and React DOM 19; three.js (only `ShredSheet` uses it, loaded on demand)
 - Styling: plain CSS; the `@tailwindcss/vite` plugin is configured, but no stylesheet imports Tailwind yet
 - Build tooling: Vite 8, TypeScript 7, and `@vitejs/plugin-react`
 - Formatting: oxfmt

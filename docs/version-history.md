@@ -2,6 +2,59 @@
 
 Repository changes, newest first.
 
+## 2026-11-10: Redraft hero: a closer composition, the drift kept whole
+
+- **Why:** on a 1280 × 800 screen (Nest Hub Max, which gets the scaled desktop composition) the shredded sheet's animation was cut off a bit; the owner asked to close up the composition.
+- **Cause:** the sheet's right edge sat on the bar's right edge (1397 of 1440), and the drifting strips spread about 90 design px past the sheet's sides, so they ran off the screen; they were also clipped at the canvas's edges, which on desktop were the stage's.
+- **What changed:** the sheet moves 80 design px left, 58 from the left column (571 to 1317 at 1440; its top and bottom still on the headline's capitals and the buttons'), so the widest drift ends inside the screen. On desktop the canvas now bleeds 100 design px past the stage too (`--shred-bleed`), so the strips and their shadows are never cut at its edges. Checked at 1280 × 800 and 1440 × 900.
+
+## 2026-11-10: Redraft hero: animation first on small screens, anthracite copy
+
+- **Why:** the owner wanted the animation first and the headline second on mobile, and the headline's first sentence and the price in the dark anthracite: in white they blended into the light paper.
+- **Order:** where the hero stacks (up to 1024px, phones and tablets) it now runs bar, shredded sheet, headline, price and buttons (CSS `order`; the sheet sits straight under the bar instead of centred in the room left, and the headline lost its 64px top margin).
+- **Colour:** the headline ("Your custom website, live in 10 days."; "A team behind your growth." stays grey) and the price block ("From", "€89", "/month" at its 60%) are `--accent`, `#252525`, everywhere.
+
+## 2026-11-10: Redraft hero sheet: narrow on small screens, the S cut, hand-cut strips
+
+- **Why:** the owner asked for the narrower sheet on phones and tablets, the desktop type cut off at the S of DOES, and the strips' sides shredded up like the work cards' edges.
+- **Narrow sheet:** `ShredSheet` takes a `narrow` layout with its own media query and switches to it (a fresh scene and canvas) while the query matches. Up to 1024px the hero shows the 1.12:1 sheet in 32 strips, reading ONE SIZE / DOES NOT / FIT ALL with 20% of the O, the D and the F shaved by its left edge. The hero now stacks up to 1024px too (it was 820), so tablets get the stacked layout: headline (at most 560px wide), price and buttons, then the sheet, centred in the room left, edge to edge on phones and at most 640px wide on tablets. The bar, headline and offer stay positioned there, so they keep above the sheet's canvas.
+- **The S:** a new `cutEnd` sizes the type so the longest line's last letter loses that share past the sheet's right edge; the wide sheet's is 0.4, so its right edge slices the S of DOES and the type grows to suit.
+- **Hand-cut strips:** each strip's long sides now run in crooked straight snips, as on the work cards: up to 13% of a strip's pitch in, knots 5 to 16% of the sheet's height apart, a hair of jitter and the odd notch, a different cut on each side of each strip (`EDGE` in `scene.ts`). The print follows the cut, so nothing stretches; strips are cut into 72 rows (was 40) for the detail.
+- **Bleed:** the canvas can reach past the stage (`--shred-bleed`, 120px on phones and tablets) while the sheet stays framed in the stage, so drifting strips and their shadows are no longer cut off at the stage's edges there.
+
+## 2026-11-10: Redraft hero: no wordmark, two balanced columns
+
+- **Why:** the owner asked to remove the big 1BRAND type and rebalance the hero around the space it leaves.
+- **Wordmark gone:** the image, its styles, its `wordmark` entry in `src/data/redraft.ts` and `public/assets/redraft/wordmark.svg` are removed (the logo top left still names the brand).
+- **Composition (at 1440 × 900):** the hero is now two columns under the bar. On the left the headline (292 down, was 214) and the price and buttons (480, was 402) make a block from 292 to 647, its middle at 470, a little above the middle of the room under the bar (495), where it reads as centred. On the right the shredded sheet grows to 746 × 347 (was 700 × 326): its top on the headline's capitals, its bottom on the buttons', its right edge on the page's right margin. The stage around it is 956 × 560.
+- **Phones:** the sheet now ends the hero, edge to edge, centred in the room left under the buttons.
+
+## 2026-11-10: Redraft hero sheet: no caption
+
+- **Why:** the owner asked to remove "1BRAND — Draft 02" from the sheet.
+- **What changed:** `hero.sheet.caption` is removed, so the sheet carries only ONE SIZE DOES / NOT FIT ALL. `ShredSheet` now prints the caption (and the rule under it) and the folio only when there is some; without a caption the type is centred on the sheet instead of sitting on its bottom, and it may use the sheet's full height.
+
+## 2026-11-10: Redraft hero sheet: only the first letters cut, no folio
+
+- **Why:** the owner meant 20% of the O in ONE and of the N in NOT, not 20% of each line; and the "01 / 01" folio had to go.
+- **What changed:** `cut` on `ShredSheet` is now a share of each line's first letter's width: the hero's lines start 20% of their O and N past the sheet's left edge, so the sheet's edge just shaves those letters and the rest reads in full. The type is sized on what shows of the longest line. The folio is gone from the hero (`hero.sheet.folio` removed; the component still takes one, empty by default).
+
+## 2026-11-10: Redraft hero: headline on the left, a wide shredded sheet on the right
+
+- **Why:** the owner asked for the headline on the left above the price and buttons, and a wider shredded sheet (after a second photo of a sheet cut into strips) aligned right, reading ONE SIZE DOES NOT FIT ALL on two rows with the beginning 20% of each line cut off by the shredder.
+- **Headline:** now on the left, 214 design px down (it was on the right at 267), above the price and buttons. On phones the hero runs headline, price and buttons, then the sheet, then the wordmark (the sheet moved after the offer in the markup).
+- **Sheet:** `ShredSheet` takes an `aspect` (width over height) and a `cut` (how much of each line's start is lost past the sheet's left edge). The hero's sheet is 2.15:1, cut into 56 strips (was 1.12:1 and 32), 700 × 326 design px with its right edge on the page's right margin, middle 360 down; the stage around it is 897 × 520. The type is set in capitals as big as the sheet's height allows, each line starting 20% of its own width past the left edge, so the sheet begins mid-letter ("…E SIZE DOES", "…OT FIT ALL"). The shadows' reach grows with the sheet's width. On phones the sheet is 86% of the screen's width.
+- **Copy:** `hero.sheet` in `src/data/redraft.ts` now has the two lines, a `label` for screen readers ("One size does not fit all") and the `cut`.
+
+## 2026-11-10: Redraft hero: a shredded sheet that comes together on focus
+
+- **Why:** the owner asked for a hero image of separate paper shreds, animated in a Spline-like 3D style (after a photo of a sheet cut into strips and a clip of paper falling), with type on it that reveals on focus.
+- **New component, `ShredSheet`:** a printed sheet (paper with a little grain, small print in two corners, the type set big along the bottom) cut into 32 vertical strips of slightly uneven width, rendered with three.js. The scene lives in `scene.ts` and is loaded with a dynamic `import()`, so the hero's copy renders first and the canvas fades in when it is ready; without WebGL the stage stays empty (it is decoration, and its words are its `aria-label`).
+- **Drifting:** each strip floats apart (the row spread to 118% of the sheet), turns about its length, leans, twists end to end, curls and sways, each on its own slow clock (periods of about 15 to 30s), lit from the top left with soft shadows on a transparent plane behind, so they fall on the page's paper. The whole sheet leans a little towards the pointer and floats gently. Even together the strips aren't quite flat, as in the reference photo.
+- **Focus:** hovering the sheet, focusing it from the keyboard (it is in the tab order) or tapping it brings the strips together, each on a critically damped spring, in a ripple out from the pointer over about 0.4s, so the type can be read; leaving lets them drift apart again after 0.3s. On load the sheet shows whole for about a second, then comes apart left to right. With reduced motion it lies whole and still.
+- **On the page:** the stage sits in the hero's open middle (620 × 600 design px, the sheet itself about 372 × 332 at 1440, centred at 660 × 370), under the hero's copy; on phones it sits in the flow between the headline and the price, edge to edge, the sheet 78% of the width. The copy is placeholder, "Design that turns heads." with "1BRAND — Draft 02" and "01 / 01" as the small print, in `hero.sheet` in `src/data/redraft.ts`.
+- **Dependency:** `three` 0.187.0 (and `@types/three` for development).
+
 ## 2026-11-10: Redraft work carousel: onlookers reverted
 
 - **Why:** the owner found the onlookers an interesting idea but asked to go back to what it was.

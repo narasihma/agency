@@ -6,6 +6,22 @@ Items from the site owner, in the order given. When one is finished, tick it, ad
 
 ## Done
 
+- [x] **52. Redraft hero: close up the composition; at 1280 × 800 (Nest Hub Max) the animation was cut off a bit** (added 2026-11-10, done 2026-11-10). The sheet moved 80 design px in towards the text, and its canvas bleeds past its stage on desktop too, so the drift stays whole and on screen. See `version-history.md`.
+
+- [x] **51. Redraft hero: on mobile the animation first and the headline second; "Your custom website, live in 10 days." and the price in the dark anthracite for contrast** (added 2026-11-10, done 2026-11-10). See `version-history.md`.
+
+- [x] **50. Redraft hero sheet: the narrower sheet on phones and tablets; on desktop cut the type off at the S of DOES; shred up the strips' sides like the work cards' edges** (added 2026-11-10, done 2026-11-10). Up to 1024px the hero stacks and shows the narrow sheet (ONE SIZE / DOES NOT / FIT ALL); the wide sheet's right edge slices the S; every strip's long sides are hand-cut. See `version-history.md`.
+
+- [x] **49. Redraft hero: remove the big 1BRAND wordmark and rebalance the composition around the negative space** (added 2026-11-10, done 2026-11-10). Two columns now: headline, price and buttons on the left; a bigger sheet on the right, its top and bottom on the left column's. See `version-history.md`.
+
+- [x] **48. Redraft hero sheet: remove the "1BRAND — Draft 02" caption** (added 2026-11-10, done 2026-11-10). The caption and its rule are gone; the type is centred on the sheet. See `version-history.md`.
+
+- [x] **47. Redraft hero sheet: cut off 20% of the O in ONE and of the N in NOT (not 20% of each line); remove the 01 / 01 folio** (added 2026-11-10, done 2026-11-10). See `version-history.md`.
+
+- [x] **46. Redraft hero: the headline on the left above the price and buttons; a wider shredded sheet (after the owner's second photo), aligned right, reading ONE SIZE DOES NOT FIT ALL on two rows with the first 20% of each line cut off by the shredder** (added 2026-11-10, done 2026-11-10). The sheet is now 2.15:1, cut into 56 strips, 700px wide on the right at 1440. See `version-history.md`.
+
+- [x] **45. Redraft hero: a shredded paper sheet as the hero image, animated in 3D ("Spline style", after the owner's photo of paper strips and a clip of falling paper), with type on it that reveals on focus** (added 2026-11-10, done 2026-11-10). New `ShredSheet` component: 32 strips float apart in the hero's open middle and come together on hover, keyboard focus or a tap, so "Design that turns heads." (placeholder copy) can be read. See `version-history.md`.
+
 - [x] **44. Redraft work carousel: revert 43, back to the RPM lights** (added 2026-11-10, done 2026-11-10). The onlookers and their code are gone; the carousel is as committed in `f2a0eac`. See `version-history.md`.
 
 - [x] **43. Redraft work carousel: try out the "head-turning" visual metaphor, a crowd of paper heads under the cards that turn towards the current one, instead of the RPM lights** (added 2026-11-10, done 2026-11-10, reverted in 44). A front and a back row of cut-paper onlookers turned in stop motion to look at the current card. An interesting idea, but not it.

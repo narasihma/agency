@@ -56,7 +56,6 @@ export const REDRAFT_ASSETS = {
       lid: { src: asset("logo-state-4-lid.png"), ...REDRAFT_LOGO_EYE.lid },
     },
   },
-  wordmark: asset("wordmark.svg"),
   texture: asset("texture.jpg"),
   /** crumpled paper that fades into the page's paper as it scrolls (from the torn-sheet photo) */
   paperCrumple: asset("paper-crumple.jpg"),
@@ -83,6 +82,22 @@ export const REDRAFT = {
     priceFrom: "From",
     price: "€89",
     pricePeriod: "/month",
+    /**
+      the shredded sheet in the hero: its type comes together on focus, 20% of each line's first
+      letter (the O, the N) lost past the sheet's left edge, as if the shredder took it, and on the
+      wide sheet the S of DOES sliced by its right edge. Phones and tablets get a narrower sheet.
+    */
+    sheet: {
+      label: "One size does not fit all",
+      wide: { lines: ["ONE SIZE DOES", "NOT FIT ALL"], cut: 0.2, cutEnd: 0.4, aspect: 2.15, strips: 56 },
+      narrow: {
+        query: "(max-width: 1024px)",
+        lines: ["ONE SIZE", "DOES NOT", "FIT ALL"],
+        cut: 0.2,
+        aspect: 1.12,
+        strips: 32,
+      },
+    },
   },
   primaryCta: { label: "Book a call", caption: "20min – No commitment", href: "#contact" },
   secondaryCta: { label: "Explore our plans", href: "#plans" },

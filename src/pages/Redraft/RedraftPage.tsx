@@ -2,6 +2,7 @@ import { useRef } from "react";
 import ActionButton from "@/components/ActionButton";
 import CrumplePaper from "@/components/CrumplePaper";
 import MorphLogo from "@/components/MorphLogo";
+import ShredSheet from "@/components/ShredSheet";
 import WorkCarousel from "@/components/WorkCarousel";
 import { REDRAFT, REDRAFT_ASSETS as A } from "@/data/redraft.ts";
 import "./RedraftPage.css";
@@ -72,12 +73,11 @@ export default function RedraftPage() {
             </div>
           </div>
 
-          <img
-            className="rd-hero__wordmark"
-            src={A.wordmark}
-            alt={REDRAFT.brand}
-            width={1312}
-            height={259}
+          <ShredSheet
+            className="rd-hero__shred"
+            {...hero.sheet.wide}
+            narrow={hero.sheet.narrow}
+            label={hero.sheet.label}
           />
         </header>
 
